@@ -16,7 +16,8 @@ import {
   FileText, 
   Copy, 
   Check, 
-  RotateCw 
+  RotateCw,
+  Search
 } from "lucide-react";
 
 export default function BuatPengaduan() {
@@ -354,6 +355,14 @@ export default function BuatPengaduan() {
                         </>
                       )}
                     </button>
+                    
+                    <Link 
+                      href="/pengaduan/lacak"
+                      className="w-full mt-4 bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 active:scale-[0.99] font-bold py-3.5 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-base text-center"
+                    >
+                      <Search className="w-5 h-5" />
+                      <span>Lacak Status Pengaduan</span>
+                    </Link>
                   </form>
                 )}
               </div>

@@ -74,7 +74,7 @@ export default async function PortalPage() {
           </Link>
 
           {/* Card 2 */}
-          <Link href="/pengaduan" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-amber-600/90 backdrop-blur-md border border-amber-500/30 p-6 rounded-2xl overflow-hidden hover:bg-amber-600 transition-all duration-300 shadow-xl hover:-translate-y-1">
+          <Link href="/pengaduan/buat" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-amber-600/90 backdrop-blur-md border border-amber-500/30 p-6 rounded-2xl overflow-hidden hover:bg-amber-600 transition-all duration-300 shadow-xl hover:-translate-y-1">
             <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
               <Megaphone className="w-32 h-32 text-white" />
             </div>
@@ -82,7 +82,7 @@ export default async function PortalPage() {
               <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
                 <Megaphone className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-white font-bold text-xl mb-1">Aduan & Informasi</h3>
+              <h3 className="text-white font-bold text-xl mb-1">Layanan Pengaduan</h3>
               <p className="text-amber-100 text-sm mb-6 flex-grow">Sistem Pengaduan Masyarakat</p>
               <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
                 <span>Klik untuk melihat layanan</span>
