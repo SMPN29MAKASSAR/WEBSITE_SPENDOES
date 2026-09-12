@@ -38,7 +38,18 @@ export default async function KontakPage() {
   const jamSabtuMinggu = getSetting('jam_sabtu_minggu', 'Libur / Tutup');
 
   const waLink = `https://wa.me/${schoolWa}?text=${encodeURIComponent('Halo Admin Layanan SMPN 29 Makassar, saya ingin menanyakan informasi seputar...')}`;
-  const mapsEmbedUrl = getSetting('maps_embed_url', "https://maps.google.com/maps?q=SMP+Negeri+29+Makassar%2C+Jl.+Andi+Mappanyukki+No.66%2C+Makassar&t=&z=16&ie=UTF8&iwloc=&output=embed");
+  
+  let rawMapsUrl = getSetting('maps_embed_url', "https://maps.google.com/maps?q=SMP+Negeri+29+Makassar%2C+Jl.+Andi+Mappanyukki+No.66%2C+Makassar&t=&z=16&ie=UTF8&iwloc=&output=embed");
+  let mapsEmbedUrl = rawMapsUrl;
+  
+  // Auto-extract src if user accidentally pastes the entire <iframe> tag
+  if (rawMapsUrl.includes('<iframe') && rawMapsUrl.includes('src=')) {
+    const match = rawMapsUrl.match(/src="([^"]+)"/);
+    if (match && match[1]) {
+      mapsEmbedUrl = match[1];
+    }
+  }
+
   const mapsDirectUrl = "https://maps.google.com/?q=SMP+Negeri+29+Makassar";
 
   return (
