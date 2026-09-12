@@ -160,7 +160,7 @@ export default async function BeritaPage(props: BeritaPageProps) {
                     {/* Image Container with Badge */}
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
                       {post.imageUrl ? (
-                        <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-700 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                           {/* Subtle decorative mesh overlay */}
@@ -271,7 +271,7 @@ export default async function BeritaPage(props: BeritaPageProps) {
                       {/* Small thumbnail */}
                       <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 border border-emerald-100 flex-shrink-0 flex items-center justify-center text-emerald-600 overflow-hidden relative group-hover:border-emerald-300 transition-all">
                         {recent.imageUrl ? (
-                          <img src={recent.imageUrl} alt={recent.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                          <img src={recent.imageUrl} alt={recent.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" referrerPolicy="no-referrer" />
                         ) : (
                           <Newspaper className="w-6 h-6 text-emerald-600/70 group-hover:scale-110 transition-transform duration-300" />
                         )}

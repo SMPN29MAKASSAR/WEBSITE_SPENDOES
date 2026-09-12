@@ -37,6 +37,7 @@ export default async function GuruPage() {
                     src={pegawai.foto}
                     alt={pegawai.nama}
                     className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full w-full bg-gray-100 text-gray-400">
