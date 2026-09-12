@@ -19,17 +19,47 @@ export default async function EkstrakurikulerPage() {
       </section>
       <section className="container mx-auto px-6 py-20 max-w-7xl">
         {ekstrakurikuler.length === 0 ? <div className="text-center py-12 text-slate-500">Belum ada data Ekstrakurikuler. Anda dapat menambahkannya melalui Dashboard Admin.</div> : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {ekstrakurikuler.map((eks, idx) => {
-              const colors = ["bg-emerald-50", "bg-teal-50", "bg-green-50"];
-              const color = colors[idx % colors.length];
+              const colors = [
+                "from-emerald-500 to-teal-600",
+                "from-teal-500 to-emerald-600",
+                "from-green-500 to-emerald-600",
+                "from-emerald-600 to-green-600"
+              ];
+              const gradient = colors[idx % colors.length];
+              
               return (
-                <div key={eks.id} className="bg-white p-6 rounded-3xl shadow-sm hover:shadow-xl border border-slate-100 transition-all flex flex-col group">
-                  <div className="flex items-center gap-4 mb-4">
-                    {eks.imageUrl ? <div className="relative w-14 h-14 shrink-0"><Image src={eks.imageUrl} alt={eks.nama} fill className="rounded-2xl object-cover group-hover:scale-110 transition-transform" /></div> : <div className={`${color} shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center`}><Tent className="w-8 h-8 opacity-60" /></div>}
-                    <h3 className="text-lg font-bold font-jakarta text-slate-900">{eks.nama}</h3>
+                <div key={eks.id} className="bg-white rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 transition-all duration-300 flex flex-col group overflow-hidden hover:-translate-y-1">
+                  {/* Bagian Gambar / Header Kotak */}
+                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
+                    {eks.imageUrl ? (
+                      <Image 
+                        src={eks.imageUrl} 
+                        alt={eks.nama} 
+                        fill 
+                        className="object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                    ) : (
+                      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+                        <Tent className="w-16 h-16 text-white/80 group-hover:scale-110 transition-transform duration-500" />
+                      </div>
+                    )}
+                    {/* Efek gradient bawah agar menyatu dengan konten */}
+                    <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
-                  <p className="text-slate-600 text-sm flex-grow">{eks.deskripsi}</p>
+                  
+                  {/* Bagian Informasi Text */}
+                  <div className="p-6 flex flex-col flex-grow">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-xl font-bold font-jakarta text-slate-800 group-hover:text-emerald-700 transition-colors">
+                        {eks.nama}
+                      </h3>
+                    </div>
+                    <p className="text-slate-600 text-sm leading-relaxed flex-grow">
+                      {eks.deskripsi}
+                    </p>
+                  </div>
                 </div>
               );
             })}
