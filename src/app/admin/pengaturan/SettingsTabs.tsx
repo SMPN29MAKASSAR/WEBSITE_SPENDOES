@@ -438,6 +438,17 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
                   className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
+              <div className="md:col-span-2 mt-4">
+                <label className="block text-sm font-medium text-slate-700 mb-1">URL Google Maps (URL Embed Peta)</label>
+                <p className="text-xs text-slate-500 mb-2">Buka Google Maps &gt; Cari Sekolah &gt; Bagikan &gt; Sematkan Peta &gt; Salin isi dari atribut <code className="bg-slate-100 px-1 rounded">src="..."</code></p>
+                <input 
+                  type="text" 
+                  value={settings['maps_embed_url'] || ''}
+                  onChange={(e) => handleChange('maps_embed_url', e.target.value)}
+                  placeholder="https://www.google.com/maps/embed?pb=..."
+                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
             </div>
             
             <h3 className="text-lg font-bold text-slate-800 mb-2 mt-8">Jam Operasional</h3>

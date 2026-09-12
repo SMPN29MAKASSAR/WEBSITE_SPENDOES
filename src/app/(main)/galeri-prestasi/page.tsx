@@ -43,6 +43,7 @@ export default async function GaleriPrestasiPage() {
                       src={prestasi.imageUrl}
                       alt={prestasi.nama}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      referrerPolicy="no-referrer"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-slate-400 bg-slate-100">
