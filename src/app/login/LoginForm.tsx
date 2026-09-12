@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@sekolah.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +47,7 @@ export default function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
-          placeholder="admin@sekolah.com"
+          placeholder="Masukkan email atau NISN/NIP"
         />
       </div>
       <div>
@@ -56,7 +56,7 @@ export default function LoginForm() {
           <a href="#" className="text-xs text-blue-600 hover:underline">Lupa Sandi?</a>
         </div>
         <input 
-          type="text" 
+          type="password" 
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
