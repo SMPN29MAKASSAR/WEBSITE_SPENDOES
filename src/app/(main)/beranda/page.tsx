@@ -189,13 +189,16 @@ export default async function Home() {
         className="relative w-full overflow-hidden bg-slate-50 pt-16 pb-32 lg:pt-32 lg:pb-40 bg-cover bg-center"
         style={heroBg ? { backgroundImage: `url('${heroBg}')` } : {}}
       >
-        {heroBg && <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-0"></div>}
-        {/* Background Decorative Elements */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-          <div className="absolute top-0 -right-24 w-96 h-96 bg-teal-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-24 left-20 w-96 h-96 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
-        </div>
+        {/* Overlays */}
+        {heroBg ? (
+          <div className="absolute inset-0 bg-white/60 z-0"></div>
+        ) : (
+          <div className="absolute inset-0 z-0">
+            <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div className="absolute top-0 -right-24 w-96 h-96 bg-teal-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div className="absolute -bottom-24 left-20 w-96 h-96 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+          </div>
+        )}
 
         <div className="container relative z-10 mx-auto px-6 text-center max-w-5xl">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 font-medium text-sm mb-8">
