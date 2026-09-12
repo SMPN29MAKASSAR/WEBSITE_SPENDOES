@@ -439,6 +439,42 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
                 />
               </div>
             </div>
+            
+            <h3 className="text-lg font-bold text-slate-800 mb-2 mt-8">Jam Operasional</h3>
+            <p className="text-sm text-slate-500 mb-6">Waktu pelayanan kantor untuk ditampilkan di halaman kontak.</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Senin - Kamis</label>
+                <input 
+                  type="text" 
+                  value={settings['jam_senin_kamis'] || ''}
+                  onChange={(e) => handleChange('jam_senin_kamis', e.target.value)}
+                  placeholder="08:00 - 16:00 WITA"
+                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Jumat</label>
+                <input 
+                  type="text" 
+                  value={settings['jam_jumat'] || ''}
+                  onChange={(e) => handleChange('jam_jumat', e.target.value)}
+                  placeholder="08:00 - 16:30 WITA"
+                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Sabtu & Minggu</label>
+                <input 
+                  type="text" 
+                  value={settings['jam_sabtu_minggu'] || ''}
+                  onChange={(e) => handleChange('jam_sabtu_minggu', e.target.value)}
+                  placeholder="Libur / Tutup"
+                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
           </div>
         )}
 

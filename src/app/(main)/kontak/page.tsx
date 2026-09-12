@@ -19,6 +19,8 @@ export const metadata = {
   description: "Hubungi UPT SPF SMPN 29 Makassar. Informasi alamat, telepon, email resmi, WhatsApp, jam operasional, dan lokasi peta Google Maps.",
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function KontakPage() {
   // Ambil pengaturan dinamis dari database (jika sudah diset di admin)
   const settings = await prisma.setting.findMany();
@@ -30,6 +32,10 @@ export default async function KontakPage() {
   const schoolEmail = getSetting('school_email', 'info@smpn29makassar.sch.id');
   const schoolWa = getSetting('school_whatsapp', '6281242332929');
   const schoolWebsite = "smpn29makassar.sch.id";
+
+  const jamSeninKamis = getSetting('jam_senin_kamis', '08:00 – 16:00 WITA');
+  const jamJumat = getSetting('jam_jumat', '08:00 – 16:30 WITA');
+  const jamSabtuMinggu = getSetting('jam_sabtu_minggu', 'Libur / Tutup');
 
   const waLink = `https://wa.me/${schoolWa}?text=${encodeURIComponent('Halo Admin Layanan SMPN 29 Makassar, saya ingin menanyakan informasi seputar...')}`;
   const mapsEmbedUrl = "https://maps.google.com/maps?q=SMP+Negeri+29+Makassar%2C+Jl.+Andi+Mappanyukki+No.66%2C+Makassar&t=&z=16&ie=UTF8&iwloc=&output=embed";
@@ -294,7 +300,7 @@ export default async function KontakPage() {
                     <Calendar className="w-4 h-4 text-emerald-400" />
                     <span className="text-sm font-medium text-slate-200">Senin – Kamis</span>
                   </div>
-                  <span className="text-sm font-bold text-emerald-300 font-mono">08:00 – 16:00 WITA</span>
+                  <span className="text-sm font-bold text-emerald-300 font-mono">{jamSeninKamis}</span>
                 </div>
 
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/10">
@@ -302,7 +308,7 @@ export default async function KontakPage() {
                     <Calendar className="w-4 h-4 text-emerald-400" />
                     <span className="text-sm font-medium text-slate-200">Jumat</span>
                   </div>
-                  <span className="text-sm font-bold text-emerald-300 font-mono">08:00 – 16:30 WITA</span>
+                  <span className="text-sm font-bold text-emerald-300 font-mono">{jamJumat}</span>
                 </div>
 
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/10">
@@ -311,7 +317,7 @@ export default async function KontakPage() {
                     <span className="text-sm font-medium text-slate-300">Sabtu & Minggu</span>
                   </div>
                   <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30">
-                    Libur / Tutup
+                    {jamSabtuMinggu}
                   </span>
                 </div>
               </div>
