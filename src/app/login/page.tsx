@@ -14,7 +14,7 @@ export default function LoginPage() {
           <div className="bg-blue-600 p-3 rounded-2xl mb-4">
              <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold font-jakarta text-slate-900 text-center">Portal Akademik</h1>
+          <h1 className="text-2xl font-bold font-jakarta text-slate-900 text-center">Portal Admin</h1>
           <p className="text-sm text-slate-500 mt-2 text-center">Silakan masuk menggunakan akun sekolah Anda.</p>
         </div>
 
