@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 import { Tent } from "lucide-react";
 
 export const metadata = { title: "Ekstrakurikuler | UPT SPF SMPN 29 Makassar" };
@@ -25,7 +26,7 @@ export default async function EkstrakurikulerPage() {
               return (
                 <div key={eks.id} className="bg-white p-6 rounded-3xl shadow-sm hover:shadow-xl border border-slate-100 transition-all flex flex-col group">
                   <div className="flex items-center gap-4 mb-4">
-                    {eks.imageUrl ? <img src={eks.imageUrl} alt={eks.nama} className="w-14 h-14 rounded-2xl object-cover shrink-0 group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" /> : <div className={`${color} shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center`}><Tent className="w-8 h-8 opacity-60" /></div>}
+                    {eks.imageUrl ? <div className="relative w-14 h-14 shrink-0"><Image src={eks.imageUrl} alt={eks.nama} fill className="rounded-2xl object-cover group-hover:scale-110 transition-transform" /></div> : <div className={`${color} shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center`}><Tent className="w-8 h-8 opacity-60" /></div>}
                     <h3 className="text-lg font-bold font-jakarta text-slate-900">{eks.nama}</h3>
                   </div>
                   <p className="text-slate-600 text-sm flex-grow">{eks.deskripsi}</p>

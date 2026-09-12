@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 
 export const metadata = {
   title: "Galeri Sekolah",
@@ -31,12 +32,12 @@ export default async function GaleriPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {galeriList.map((item) => (
             <div key={item.id} className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
-              <div className="aspect-w-4 aspect-h-3 relative h-64 overflow-hidden bg-gray-100">
-                <img
+              <div className="relative aspect-[4/3] w-full overflow-hidden">
+                <Image
                   src={item.imageUrl}
                   alt={item.judul}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 transition-opacity duration-300"></div>
                 <div className="absolute bottom-0 left-0 right-0 p-5">

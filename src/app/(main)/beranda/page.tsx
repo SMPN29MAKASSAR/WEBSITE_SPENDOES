@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Users, Leaf, Trophy, ArrowUpRight } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { Newspaper, Calendar } from "lucide-react";
@@ -59,7 +60,7 @@ async function BeritaTerbaruSection() {
           >
             <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
               {post.imageUrl ? (
-                <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={post.imageUrl} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-700 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                   <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
@@ -234,7 +235,7 @@ export default async function Home() {
           <div className="w-full lg:w-1/2 relative">
             <div className="aspect-[4/5] rounded-3xl bg-slate-200 overflow-hidden relative shadow-2xl">
               {getSetting('headmaster_photo', '') ? (
-                <img src={getSetting('headmaster_photo', '')} alt="Kepala Sekolah" className="w-full h-full object-cover" />
+                <Image src={getSetting('headmaster_photo', '')} alt="Kepala Sekolah" fill className="object-cover" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-tr from-slate-300 to-slate-100 flex items-center justify-center">
                   <Users className="w-32 h-32 text-slate-400 opacity-20" />

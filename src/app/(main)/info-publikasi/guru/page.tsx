@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 
 export const metadata = {
   title: "Direktori Guru & Pegawai",
@@ -33,11 +34,12 @@ export default async function GuruPage() {
             <div key={pegawai.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="aspect-w-3 aspect-h-4 bg-gray-200 relative h-64 overflow-hidden">
                 {pegawai.foto ? (
-                  <img
+                  <Image
                     src={pegawai.foto}
                     alt={pegawai.nama}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
+                    fill
+                    className="object-cover"
+                    unoptimized={false}
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full w-full bg-gray-100 text-gray-400">

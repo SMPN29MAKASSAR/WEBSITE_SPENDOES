@@ -39,11 +39,11 @@ export default async function GaleriPrestasiPage() {
               <div key={prestasi.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                 <div className="relative h-60 w-full bg-slate-100 overflow-hidden">
                   {prestasi.imageUrl ? (
-                    <img
+                    <Image
                       src={prestasi.imageUrl}
                       alt={prestasi.nama}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      referrerPolicy="no-referrer"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-slate-400 bg-slate-100">

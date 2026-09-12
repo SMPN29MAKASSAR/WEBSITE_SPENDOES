@@ -18,9 +18,8 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     
-    let userId = (session?.user as any)?.id;
-    
-    if (!userId && session?.user?.email) {
+    let userId = null;
+    if (session?.user?.email) {
       const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
       if (dbUser) userId = dbUser.id;
     }
