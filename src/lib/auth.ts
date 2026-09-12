@@ -17,31 +17,49 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // Menerima kombinasi email/password apa pun asalkan password admin123
-        if (credentials?.password === "admin123" || credentials?.password === "password") {
-          return {
-            id: "1",
-            email: "admin@sekolah.com",
-            name: "Admin",
-            role: "ADMIN",
-          }
+        if (!credentials?.email || !credentials?.password) {
+          return null;
         }
-        return null
+        
+        // Cek user di DB
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
+
+        if (!user || !user.password) {
+          return null;
+        }
+
+        // Bandingkan password
+        const bcrypt = require("bcryptjs");
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        
+        if (isValid) {
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
+        }
+        return null;
       }
     })
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.userId = user.id
+        token.userId = user.id;
+        token.role = (user as any).role;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (session && session.user && token) {
         (session.user as any).id = token.userId;
+        (session.user as any).role = token.role;
       }
-      return session
+      return session;
     }
   }
 }
