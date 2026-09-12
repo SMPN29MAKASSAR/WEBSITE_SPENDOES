@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { Newspaper, Calendar } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 async function ProgramKamiList() {
   const programs = await prisma.program.findMany({ take: 3, orderBy: { createdAt: "asc" } });
   if (programs.length === 0) return <div className="text-center text-slate-500 py-10 col-span-3">Belum ada program yang ditambahkan dari admin.</div>;

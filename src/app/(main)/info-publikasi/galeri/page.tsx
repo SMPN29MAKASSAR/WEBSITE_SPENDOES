@@ -5,6 +5,8 @@ export const metadata = {
   description: "Galeri foto kegiatan dan fasilitas sekolah",
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function GaleriPage() {
   const galeriList = await prisma.galeri.findMany({
     orderBy: { createdAt: 'desc' },

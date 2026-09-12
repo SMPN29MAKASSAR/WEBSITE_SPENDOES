@@ -6,6 +6,8 @@ export const metadata = {
   title: "Portal Layanan | UPT SPF SMPN 29 Makassar",
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function PortalPage() {
   const settings = await prisma.setting.findMany();
   const getSetting = (key: string, defaultValue: string) => 

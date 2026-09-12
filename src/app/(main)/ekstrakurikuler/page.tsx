@@ -3,6 +3,8 @@ import { Tent } from "lucide-react";
 
 export const metadata = { title: "Ekstrakurikuler | UPT SPF SMPN 29 Makassar" };
 
+export const dynamic = 'force-dynamic';
+
 export default async function EkstrakurikulerPage() {
   const ekstrakurikuler = await prisma.ekstrakurikuler.findMany({ orderBy: { createdAt: "asc" } });
 
