@@ -37,7 +37,7 @@ export default async function AdminLayout({
             </div>
             <div>
               <p className="text-sm font-bold text-white">{session?.user?.name}</p>
-              <p className="text-xs text-emerald-300 capitalize">{session?.user?.role || "Admin"}</p>
+              <p className="text-xs text-emerald-300 capitalize">{(session?.user as any)?.role || "Admin"}</p>
             </div>
           </div>
           <Link href="/api/auth/signout" className="flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors text-sm font-medium">

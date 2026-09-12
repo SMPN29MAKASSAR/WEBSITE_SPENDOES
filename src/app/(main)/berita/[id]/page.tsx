@@ -27,7 +27,7 @@ export default async function DetailBerita({ params }: { params: Promise<{ id: s
           </div>
         </header>
         <div className="prose prose-emerald max-w-none prose-img:rounded-xl">
-          {post.content.split('\n').map((paragraph, index) => (
+          {(post.content || "").split('\n').map((paragraph, index) => (
             <p key={index} className="mb-4 text-gray-800 leading-relaxed text-lg">
               {paragraph}
             </p>
