@@ -130,8 +130,11 @@ export default function ManajemenPortal() {
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
-                  placeholder="Misal: /layanan-ptsp atau https://..."
+                  placeholder="Misal: /layanan-ptsp atau iframe:https://..."
                 />
+                <p className="text-xs text-slate-500 mt-1">
+                  Tips: Tambahkan <strong>iframe:</strong> di awal link jika ingin membukanya dalam jendela sembulan (modal) tanpa memindahkan halaman. Contoh: <code className="bg-slate-100 px-1 py-0.5 rounded text-emerald-600">iframe:https://skpd.makassar.go.id</code>
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

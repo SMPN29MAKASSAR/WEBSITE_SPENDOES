@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Building2, Megaphone, BookOpen, UserCircle, Globe, GraduationCap } from "lucide-react";
-import * as LucideIcons from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import PortalLinksClient from "./PortalLinksClient";
 
 export const metadata = {
   title: "Portal Layanan | UPT SPF SMPN 29 Makassar",
@@ -57,50 +57,7 @@ export default async function PortalPage() {
         </div>
 
         {/* Quick Access Cards */}
-        <div className="flex flex-wrap justify-center gap-6 w-full mb-12">
-          {portalLinks.map((link) => {
-            const IconComp = (LucideIcons as any)[link.icon] || LucideIcons.Link;
-            // Map colors
-            const colorStyles: any = {
-              emerald: "bg-emerald-900/40 border-emerald-500/30 hover:bg-emerald-800/60 text-emerald-200",
-              amber: "bg-amber-600/90 border-amber-500/30 hover:bg-amber-600 text-amber-100",
-              blue: "bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-200",
-              rose: "bg-rose-900/40 border-rose-500/30 hover:bg-rose-800/60 text-rose-200",
-              purple: "bg-purple-900/40 border-purple-500/30 hover:bg-purple-800/60 text-purple-200",
-              slate: "bg-slate-900/70 border-slate-500/30 hover:bg-slate-800/90 text-slate-300"
-            };
-            
-            const styleClass = colorStyles[link.color] || colorStyles.emerald;
-            const isExternal = link.url.startsWith('http');
-
-            return (
-              <Link 
-                key={link.id}
-                href={link.url}
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noopener noreferrer" : undefined}
-                className={`w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative backdrop-blur-md border p-6 rounded-2xl overflow-hidden transition-all duration-300 shadow-xl hover:-translate-y-1 ${styleClass.split(' text-')[0]}`}
-              >
-                <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
-                  <IconComp className="w-32 h-32 text-white" />
-                </div>
-                <div className="relative z-10 flex flex-col text-left h-full">
-                  <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                    <IconComp className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-white font-bold text-xl mb-1">{link.title}</h3>
-                  <p className={`text-sm mb-6 flex-grow text-${styleClass.split(' text-')[1]}`}>{link.description}</p>
-                  <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
-                    <span>Klik untuk melihat layanan</span>
-                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                      <span className="transform rotate-0">&rarr;</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        <PortalLinksClient links={portalLinks} />
 
         {/* Bottom Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto mt-4">
