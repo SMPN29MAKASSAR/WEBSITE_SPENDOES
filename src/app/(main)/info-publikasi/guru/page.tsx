@@ -5,6 +5,8 @@ export const metadata = {
   description: "Daftar guru dan pegawai SMPN 29 Makassar",
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function GuruPage() {
   const pegawaiList = await prisma.pegawai.findMany({
     orderBy: { nama: 'asc' },

@@ -85,6 +85,43 @@ export default function MainLayout({
             <Menu className="w-6 h-6" />
           </button>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <nav className="xl:hidden bg-emerald-800 border-t border-emerald-600 px-4 py-4 flex flex-col gap-4 text-sm font-medium">
+            <Link href="/beranda" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Beranda</Link>
+            <Link href="/berita" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Berita</Link>
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Portal Layanan</Link>
+            
+            <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
+              <span className="text-emerald-300 text-xs uppercase tracking-wider">Profil</span>
+              <Link href="/profil#tentang" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Tentang Kami</Link>
+              <Link href="/profil#standar" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Standar Layanan</Link>
+              <Link href="/profil#sejarah" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Sejarah</Link>
+            </div>
+
+            <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
+              <span className="text-emerald-300 text-xs uppercase tracking-wider">Info Publikasi</span>
+              <Link href="/info-publikasi/guru" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Data Guru dan Pegawai</Link>
+              <Link href="/info-publikasi/galeri" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Galeri Foto</Link>
+              <Link href="/galeri-prestasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Galeri Prestasi</Link>
+            </div>
+
+            <Link href="https://portal.smpn29makassar.com" target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Akademik</Link>
+            <Link href="/ekstrakurikuler" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Ekstrakurikuler</Link>
+            <Link href="/kontak" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Kontak</Link>
+            
+            <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
+              <span className="text-emerald-300 text-xs uppercase tracking-wider">Pengaduan</span>
+              <Link href="/pengaduan/buat" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Buat Pengaduan</Link>
+              <Link href="/pengaduan/lacak" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Lacak Pengaduan</Link>
+            </div>
+
+            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="bg-yellow-500 text-slate-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 text-center mt-2">
+              Login Admin
+            </Link>
+          </nav>
+        )}
       </header>
 
       <main className="flex-1 pt-20">
