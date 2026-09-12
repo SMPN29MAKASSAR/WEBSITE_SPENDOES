@@ -31,7 +31,7 @@ export default async function KontakPage() {
   const schoolPhone = getSetting('school_phone', '(0411) 854373');
   const schoolEmail = getSetting('school_email', 'info@smpn29makassar.sch.id');
   const schoolWa = getSetting('school_whatsapp', '6281242332929');
-  const schoolWebsite = "smpn29makassar.sch.id";
+  const schoolWebsite = getSetting('school_website', 'smpn29makassar.sch.id');
 
   const jamSeninKamis = getSetting('jam_senin_kamis', '08:00 – 16:00 WITA');
   const jamJumat = getSetting('jam_jumat', '08:00 – 16:30 WITA');
