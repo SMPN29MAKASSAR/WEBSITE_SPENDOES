@@ -192,7 +192,7 @@ export default async function Home() {
         {heroBg ? (
           <>
             <Image src={heroBg} alt="Hero SMPN 29" fill priority className="object-cover object-center z-0" />
-            <div className="absolute inset-0 bg-white/60 z-0"></div>
+            <div className="absolute inset-0 bg-slate-900/75 z-0"></div>
           </>
         ) : (
           <div className="absolute inset-0 z-0">
@@ -203,19 +203,19 @@ export default async function Home() {
         )}
 
         <div className="container relative z-10 mx-auto px-6 text-center max-w-5xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 font-medium text-sm mb-8">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-600"></span>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border font-medium text-sm mb-8 ${heroBg ? 'bg-emerald-950/50 border-emerald-800/50 text-emerald-300 backdrop-blur-sm' : 'bg-emerald-50 border-emerald-100 text-emerald-600'}`}>
+            <span className={`flex h-2 w-2 rounded-full ${heroBg ? 'bg-emerald-400' : 'bg-emerald-600'}`}></span>
             {getSetting("hero_banner_text", "Penerimaan Peserta Didik Baru (PPDB) 2026/2027 Telah Dibuka")}
           </div>
           
-          <h1 className="text-5xl lg:text-7xl font-extrabold font-jakarta text-slate-900 tracking-tight leading-[1.1] mb-8">
+          <h1 className={`text-5xl lg:text-7xl font-extrabold font-jakarta tracking-tight leading-[1.1] mb-8 ${heroBg ? 'text-white' : 'text-slate-900'}`}>
             Membangun Masa Depan <br className="hidden lg:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${heroBg ? 'from-emerald-400 to-teal-300' : 'from-emerald-600 to-teal-600'}`}>
               {getSetting('hero_title', 'Generasi Cerdas & Berkarakter')}
             </span>
           </h1>
           
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+          <p className={`text-xl max-w-3xl mx-auto mb-10 leading-relaxed ${heroBg ? 'text-slate-300' : 'text-slate-600'}`}>
             {getSetting('hero_subtitle', 'UPT SPF SMPN 29 Makassar menghadirkan ekosistem pembelajaran modern yang adaptif, inovatif, dan berbudaya lingkungan.')}
           </p>
           
