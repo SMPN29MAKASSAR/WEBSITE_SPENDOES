@@ -127,7 +127,19 @@ export default function SidebarNav() {
       )}
 
       {hasAccess([]) && (
-        <>
+        <div className="pt-4 mt-4 border-t border-emerald-800/50">
+          <p className="px-4 text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">Sistem</p>
+          <Link 
+            href="/admin/portal" 
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+              pathname === '/admin/portal' 
+                ? 'bg-emerald-800/80 text-white shadow-sm border border-emerald-700/50' 
+                : 'text-emerald-100 hover:bg-emerald-800/50 hover:text-white'
+            }`}
+          >
+            <LayoutTemplate className="w-5 h-5" />
+            Portal Layanan
+          </Link>
           <Link 
             href="/admin/pengaturan" 
             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
@@ -150,7 +162,7 @@ export default function SidebarNav() {
             <ShieldCheck className="w-5 h-5" />
             Manajemen Akun
           </Link>
-        </>
+        </div>
       )}
     </nav>
   );

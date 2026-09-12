@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Building2, Megaphone, BookOpen, UserCircle, Globe, GraduationCap } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
@@ -15,6 +16,10 @@ export default async function PortalPage() {
 
   const bgImage = getSetting('portal_bg', '/school_bg.jpg');
   const slogan = getSetting('portal_slogan', 'Ber-akhlak, Unggul, Mandiri, Peduli Lingkungan, dan Berwawasan Global');
+  
+  const portalLinks = await prisma.portalLink.findMany({
+    orderBy: { order: 'asc' }
+  });
 
   return (
     <div 
@@ -53,105 +58,48 @@ export default async function PortalPage() {
 
         {/* Quick Access Cards */}
         <div className="flex flex-wrap justify-center gap-6 w-full mb-12">
-          {/* Card 1 */}
-          <Link href="/layanan-ptsp" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-emerald-900/40 backdrop-blur-md border border-emerald-500/30 p-6 rounded-2xl overflow-hidden hover:bg-emerald-800/60 transition-all duration-300 shadow-xl hover:-translate-y-1">
-            <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
-              <Building2 className="w-32 h-32 text-white" />
-            </div>
-            <div className="relative z-10 flex flex-col text-left h-full">
-              <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-white font-bold text-xl mb-1">Layanan PTSP</h3>
-              <p className="text-emerald-200 text-sm mb-6 flex-grow">Layanan Terpadu Satu Pintu</p>
-              <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
-                <span>Klik untuk melihat layanan</span>
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <span className="transform rotate-0">&rarr;</span>
-                </div>
-              </div>
-            </div>
-          </Link>
+          {portalLinks.map((link) => {
+            const IconComp = (LucideIcons as any)[link.icon] || LucideIcons.Link;
+            // Map colors
+            const colorStyles: any = {
+              emerald: "bg-emerald-900/40 border-emerald-500/30 hover:bg-emerald-800/60 text-emerald-200",
+              amber: "bg-amber-600/90 border-amber-500/30 hover:bg-amber-600 text-amber-100",
+              blue: "bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-200",
+              rose: "bg-rose-900/40 border-rose-500/30 hover:bg-rose-800/60 text-rose-200",
+              purple: "bg-purple-900/40 border-purple-500/30 hover:bg-purple-800/60 text-purple-200",
+              slate: "bg-slate-900/70 border-slate-500/30 hover:bg-slate-800/90 text-slate-300"
+            };
+            
+            const styleClass = colorStyles[link.color] || colorStyles.emerald;
+            const isExternal = link.url.startsWith('http');
 
-          {/* Card 2 */}
-          <Link href="/pengaduan/buat" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-amber-600/90 backdrop-blur-md border border-amber-500/30 p-6 rounded-2xl overflow-hidden hover:bg-amber-600 transition-all duration-300 shadow-xl hover:-translate-y-1">
-            <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
-              <Megaphone className="w-32 h-32 text-white" />
-            </div>
-            <div className="relative z-10 flex flex-col text-left h-full">
-              <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                <Megaphone className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-white font-bold text-xl mb-1">Layanan Pengaduan</h3>
-              <p className="text-amber-100 text-sm mb-6 flex-grow">Sistem Pengaduan Masyarakat</p>
-              <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
-                <span>Klik untuk melihat layanan</span>
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <span className="transform rotate-0">&rarr;</span>
+            return (
+              <Link 
+                key={link.id}
+                href={link.url}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                className={`w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative backdrop-blur-md border p-6 rounded-2xl overflow-hidden transition-all duration-300 shadow-xl hover:-translate-y-1 ${styleClass.split(' text-')[0]}`}
+              >
+                <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
+                  <IconComp className="w-32 h-32 text-white" />
                 </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 3 */}
-          <Link href="https://portal.smpn29makassar.com" target="_blank" rel="noopener noreferrer" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-emerald-900/40 backdrop-blur-md border border-emerald-500/30 p-6 rounded-2xl overflow-hidden hover:bg-emerald-800/60 transition-all duration-300 shadow-xl hover:-translate-y-1">
-            <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
-              <BookOpen className="w-32 h-32 text-white" />
-            </div>
-            <div className="relative z-10 flex flex-col text-left h-full">
-              <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-white font-bold text-xl mb-1">Akademik</h3>
-              <p className="text-emerald-200 text-sm mb-6 flex-grow">Informasi Akademik Siswa</p>
-              <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
-                <span>Klik untuk melihat layanan</span>
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <span className="transform rotate-0">&rarr;</span>
+                <div className="relative z-10 flex flex-col text-left h-full">
+                  <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                    <IconComp className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-white font-bold text-xl mb-1">{link.title}</h3>
+                  <p className={`text-sm mb-6 flex-grow text-${styleClass.split(' text-')[1]}`}>{link.description}</p>
+                  <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
+                    <span>Klik untuk melihat layanan</span>
+                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                      <span className="transform rotate-0">&rarr;</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 4 */}
-          <Link href="/ekstrakurikuler" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-indigo-900/40 backdrop-blur-md border border-indigo-500/30 p-6 rounded-2xl overflow-hidden hover:bg-indigo-800/60 transition-all duration-300 shadow-xl hover:-translate-y-1">
-            <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
-              <UserCircle className="w-32 h-32 text-white" />
-            </div>
-            <div className="relative z-10 flex flex-col text-left h-full">
-              <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                <UserCircle className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-white font-bold text-xl mb-1">Ekstrakurikuler</h3>
-              <p className="text-indigo-200 text-sm mb-6 flex-grow">Pengembangan Bakat & Minat Siswa</p>
-              <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
-                <span>Klik untuk melihat layanan</span>
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <span className="transform rotate-0">&rarr;</span>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 5 */}
-          <Link href="/berita" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-cyan-900/40 backdrop-blur-md border border-cyan-500/30 p-6 rounded-2xl overflow-hidden hover:bg-cyan-800/60 transition-all duration-300 shadow-xl hover:-translate-y-1">
-            <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
-              <Globe className="w-32 h-32 text-white" />
-            </div>
-            <div className="relative z-10 flex flex-col text-left h-full">
-              <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                <Globe className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-white font-bold text-xl mb-1">Berita & Artikel</h3>
-              <p className="text-cyan-200 text-sm mb-6 flex-grow">Informasi & Pengumuman Terbaru</p>
-              <div className="flex items-center justify-between text-white/70 text-sm mt-auto">
-                <span>Klik untuk melihat layanan</span>
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <span className="transform rotate-0">&rarr;</span>
-                </div>
-              </div>
-            </div>
-          </Link>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Bottom Buttons */}
