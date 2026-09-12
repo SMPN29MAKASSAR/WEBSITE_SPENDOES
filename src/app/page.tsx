@@ -92,7 +92,7 @@ export default async function PortalPage() {
           </Link>
 
           {/* Card 3 */}
-          <Link href="/akademik" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-emerald-900/40 backdrop-blur-md border border-emerald-500/30 p-6 rounded-2xl overflow-hidden hover:bg-emerald-800/60 transition-all duration-300 shadow-xl hover:-translate-y-1">
+          <Link href="https://portal.smpn29makassar.com" target="_blank" rel="noopener noreferrer" className="w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)] group relative bg-emerald-900/40 backdrop-blur-md border border-emerald-500/30 p-6 rounded-2xl overflow-hidden hover:bg-emerald-800/60 transition-all duration-300 shadow-xl hover:-translate-y-1">
             <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
               <BookOpen className="w-32 h-32 text-white" />
             </div>

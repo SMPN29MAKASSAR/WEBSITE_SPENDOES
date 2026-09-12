@@ -61,7 +61,7 @@ export default function MainLayout({
               </div>
             </div>
 
-            <Link href="/akademik" className="hover:text-yellow-300 transition-colors">Akademik</Link>
+            <Link href="https://portal.smpn29makassar.com" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors">Akademik</Link>
             <Link href="/ekstrakurikuler" className="hover:text-yellow-300 transition-colors">Ekstrakurikuler</Link>
             <Link href="/kontak" className="hover:text-yellow-300 transition-colors">Kontak</Link>
             
