@@ -18,17 +18,17 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     
-    // Fallback if no valid session, try to find the default admin user
-    // Since we're in development and auth can be tricky, let's make it robust
-    let user = session?.user as any;
-    if (!user) {
-      const adminUser = await prisma.user.findUnique({ where: { email: "admin@sekolah.com" } });
-      if (!adminUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      user = { id: adminUser.id, email: adminUser.email, name: adminUser.name };
+    let userId = (session?.user as any)?.id;
+    
+    if (!userId && session?.user?.email) {
+      const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
+      if (dbUser) userId = dbUser.id;
     }
 
-    if (!user?.id) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId) {
+      const adminUser = await prisma.user.findUnique({ where: { email: "admin@sekolah.com" } });
+      if (!adminUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      userId = adminUser.id;
     }
 
     const body = await req.json();
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
-    const postData: any = { title, content, authorId: user.id };
+    const postData: any = { title, content, authorId: userId };
     if (imageUrl !== undefined) {
       postData.imageUrl = imageUrl;
     }

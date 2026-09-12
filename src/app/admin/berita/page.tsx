@@ -68,6 +68,10 @@ export default function AdminBeritaPage() {
       setCustomDate(new Date().toISOString().slice(0, 10));
       setEditingPost(null);
       fetchPosts();
+      alert("Berita berhasil disimpan!");
+    } else {
+      const errorData = await res.json();
+      alert(`Gagal menyimpan berita: ${errorData.error || res.statusText}`);
     }
   };
 

@@ -9,6 +9,8 @@ export const metadata = {
   description: "Ikuti berita terkini dan informasi penting dari SMPN 29 Makassar",
 };
 
+export const dynamic = 'force-dynamic';
+
 interface BeritaPageProps {
   searchParams?: Promise<{
     q?: string;
