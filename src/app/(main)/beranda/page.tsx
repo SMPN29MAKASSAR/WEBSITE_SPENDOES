@@ -186,12 +186,14 @@ export default async function Home() {
       
       {/* Modern Hero Section */}
       <section 
-        className="relative w-full overflow-hidden bg-slate-50 pt-16 pb-32 lg:pt-32 lg:pb-40 bg-cover bg-center"
-        style={heroBg ? { backgroundImage: `url('${heroBg}')` } : {}}
+        className="relative w-full overflow-hidden bg-slate-50 pt-16 pb-32 lg:pt-32 lg:pb-40"
       >
-        {/* Overlays */}
+        {/* Background Image & Overlays */}
         {heroBg ? (
-          <div className="absolute inset-0 bg-white/60 z-0"></div>
+          <>
+            <Image src={heroBg} alt="Hero SMPN 29" fill priority className="object-cover object-center z-0" />
+            <div className="absolute inset-0 bg-white/60 z-0"></div>
+          </>
         ) : (
           <div className="absolute inset-0 z-0">
             <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
