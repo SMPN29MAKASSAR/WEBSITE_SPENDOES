@@ -18,6 +18,7 @@ export async function POST(request: Request) {
         nama: json.nama,
         deskripsi: json.deskripsi || null,
         icon: json.icon || null,
+        linkUrl: json.linkUrl || null,
       },
     });
     return NextResponse.json(data);

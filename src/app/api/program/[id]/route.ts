@@ -11,6 +11,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         nama: json.nama,
         deskripsi: json.deskripsi || null,
         icon: json.icon || null,
+        linkUrl: json.linkUrl || null,
       },
     });
     return NextResponse.json(data);

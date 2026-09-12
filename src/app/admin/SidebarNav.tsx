@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Settings, Users, Image, MessageSquare, FileText, Trophy } from 'lucide-react';
+import { LayoutDashboard, Settings, Users, Image as ImageIcon, MessageSquare, FileText, Trophy, LayoutTemplate } from 'lucide-react';
 
 export default function SidebarNav() {
   const pathname = usePathname();
@@ -51,7 +51,7 @@ export default function SidebarNav() {
             : 'text-emerald-100 hover:bg-emerald-800/50 hover:text-white'
         }`}
       >
-        <Image className="w-5 h-5" />
+        <ImageIcon className="w-5 h-5" />
         Galeri Foto
       </Link>
       
@@ -77,6 +77,18 @@ export default function SidebarNav() {
       >
         <Trophy className="w-5 h-5" />
         Ekstrakurikuler
+      </Link>
+
+      <Link 
+        href="/admin/program" 
+        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+          pathname === '/admin/program' 
+            ? 'bg-emerald-800/80 text-white shadow-sm border border-emerald-700/50' 
+            : 'text-emerald-100 hover:bg-emerald-800/50 hover:text-white'
+        }`}
+      >
+        <LayoutTemplate className="w-5 h-5" />
+        Program Kami
       </Link>
       
       <Link 

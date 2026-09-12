@@ -10,20 +10,48 @@ import { Newspaper, Calendar } from "lucide-react";
 export const dynamic = 'force-dynamic';
 
 async function ProgramKamiList() {
-  const programs = await prisma.program.findMany({ take: 3, orderBy: { createdAt: "asc" } });
-  if (programs.length === 0) return <div className="text-center text-slate-500 py-10 col-span-3">Belum ada program yang ditambahkan dari admin.</div>;
+  const programs = await prisma.program.findMany({ orderBy: { createdAt: "asc" } });
+  if (programs.length === 0) return <div className="text-center text-slate-500 py-10 w-full col-span-full">Belum ada program yang ditambahkan dari admin.</div>;
   const colors = [{ bg: "bg-emerald-50", text: "text-emerald-600", hover: "hover:border-emerald-100" }, { bg: "bg-teal-50", text: "text-teal-600", hover: "hover:border-teal-100" }, { bg: "bg-green-50", text: "text-green-600", hover: "hover:border-green-100" }];
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
       {programs.map((prog: any, idx: number) => {
         const color = colors[idx % colors.length];
-        const IconComponent = (LucideIcons as any)[prog.icon || "BookOpen"] || LucideIcons.BookOpen;
-        return (
-          <div key={prog.id} className={`group bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl border border-slate-200/60 transition-all ${color.hover}`}>
-            <div className={`${color.bg} w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}><IconComponent className={`w-7 h-7 ${color.text}`} /></div>
+        const isEmoji = prog.icon && prog.icon.length <= 4;
+        
+        const CardContent = (
+          <>
+            <div className={`${color.bg} w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shrink-0`}>
+              {isEmoji ? (
+                <span className="text-2xl">{prog.icon}</span>
+              ) : (
+                <LucideIcons.BookOpen className={`w-7 h-7 ${color.text}`} />
+              )}
+            </div>
             <h4 className="text-xl font-bold font-jakarta text-slate-900 mb-3">{prog.nama}</h4>
-            <p className="text-slate-600 mb-6">{prog.deskripsi}</p>
+            <p className="text-slate-600 mb-6 flex-grow">{prog.deskripsi}</p>
+            {prog.linkUrl && (
+              <div className="mt-auto flex items-center text-sm font-semibold text-emerald-600 group-hover:text-emerald-700">
+                Lihat Detail <LucideIcons.ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            )}
+          </>
+        );
+
+        const cardClasses = `group flex flex-col h-full bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl border border-slate-200/60 transition-all duration-300 ${color.hover} hover:-translate-y-1`;
+
+        if (prog.linkUrl) {
+          return (
+            <Link key={prog.id} href={prog.linkUrl} className={cardClasses}>
+              {CardContent}
+            </Link>
+          );
+        }
+
+        return (
+          <div key={prog.id} className={cardClasses}>
+            {CardContent}
           </div>
         );
       })}
