@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, FileText, CheckCircle2, Clock, AlertCircle, FileCheck2, Send, Search, X } from "lucide-react";
+import { Building2, FileText, CheckCircle2, Clock, AlertCircle, FileCheck2, Send, Search, X, ShieldCheck, FileWarning, Database, GraduationCap } from "lucide-react";
 
 const SOP_SERVICES = [
   {
@@ -30,6 +30,18 @@ const SOP_SERVICES = [
     alur: "1. Mengisi form pengajuan -> 2. Verifikasi Data Siswa -> 3. Pencetakan Surat -> 4. Pengambilan"
   },
   {
+    id: "kelakuan-baik",
+    title: "Surat Keterangan Berkelakuan Baik",
+    icon: <ShieldCheck className="w-8 h-8 text-indigo-600" />,
+    syarat: [
+      "Fotokopi Rapor terakhir",
+      "Pas foto ukuran 3x4 (1 lembar)"
+    ],
+    waktu: "1 Hari Kerja",
+    biaya: "Gratis",
+    alur: "1. Mengisi form online -> 2. Verifikasi catatan Guru BK & Wali Kelas -> 3. Pengesahan Kepala Sekolah -> 4. Pengambilan di TU"
+  },
+  {
     id: "pindah-sekolah",
     title: "Surat Pindah Sekolah / Mutasi",
     icon: <Building2 className="w-8 h-8 text-amber-600" />,
@@ -43,16 +55,54 @@ const SOP_SERVICES = [
     alur: "1. Pengajuan berkas mutasi -> 2. Validasi bebas pustaka & administrasi -> 3. Penerbitan Surat Pindah -> 4. Penyerahan Dokumen"
   },
   {
+    id: "perbaikan-dapodik",
+    title: "Perbaikan Data Siswa (Dapodik / NISN)",
+    icon: <Database className="w-8 h-8 text-cyan-600" />,
+    syarat: [
+      "Fotokopi Akta Kelahiran",
+      "Fotokopi Kartu Keluarga (KK)",
+      "Bukti / Screenshot kesalahan data sebelumnya"
+    ],
+    waktu: "1 - 3 Hari Kerja",
+    biaya: "Gratis",
+    alur: "1. Pengajuan perbaikan data -> 2. Verifikasi kelengkapan berkas -> 3. Sinkronisasi Data oleh Operator Sekolah -> 4. Konfirmasi Selesai"
+  },
+  {
+    id: "surat-hilang",
+    title: "Suket Kehilangan Ijazah / Rapor",
+    icon: <FileWarning className="w-8 h-8 text-red-600" />,
+    syarat: [
+      "Surat Keterangan Kehilangan dari Kepolisian (Asli)",
+      "Fotokopi Ijazah/Rapor yang hilang (jika ada)",
+      "Fotokopi Akta Kelahiran & KK"
+    ],
+    waktu: "2 Hari Kerja",
+    biaya: "Gratis",
+    alur: "1. Pengajuan form online -> 2. Bawa syarat Asli ke loket -> 3. Pencarian arsip & Penerbitan Surat Pengganti -> 4. Pengesahan"
+  },
+  {
+    id: "skl",
+    title: "Surat Keterangan Lulus (SKL)",
+    icon: <GraduationCap className="w-8 h-8 text-teal-600" />,
+    syarat: [
+      "Telah menyelesaikan seluruh rangkaian ujian (dibuktikan dengan Kartu Ujian)",
+      "Pas foto 3x4 berwarna (2 lembar)"
+    ],
+    waktu: "1 Hari Kerja",
+    biaya: "Gratis",
+    alur: "1. Pengajuan SKL online -> 2. Verifikasi nilai & kurikulum -> 3. Pencetakan SKL -> 4. TTD Kepala Sekolah & Pengambilan"
+  },
+  {
     id: "izin-penelitian",
     title: "Surat Izin Penelitian / Observasi",
     icon: <Search className="w-8 h-8 text-purple-600" />,
     syarat: [
-      "Surat Pengantar dari Universitas / Instansi terkait",
+      "Surat Pengantar Resmi dari Universitas / Instansi terkait",
       "Proposal Singkat / Instrumen Penelitian"
     ],
     waktu: "1 - 2 Hari Kerja",
     biaya: "Gratis",
-    alur: "1. Serahkan surat pengantar ke loket -> 2. Persetujuan Kepala Sekolah -> 3. Penerbitan Surat Izin -> 4. Penelitian dimulai"
+    alur: "1. Serahkan surat pengantar ke loket -> 2. Persetujuan Kepala Sekolah -> 3. Penerbitan Surat Izin Balasan -> 4. Penelitian dimulai"
   }
 ];
 
