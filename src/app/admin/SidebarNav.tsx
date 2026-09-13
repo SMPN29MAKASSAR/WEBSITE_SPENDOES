@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { LayoutDashboard, Settings, Users, Image as ImageIcon, MessageSquare, FileText, Trophy, LayoutTemplate, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Settings, Users, Image as ImageIcon, MessageSquare, FileText, Trophy, LayoutTemplate, ShieldCheck, Building2 } from 'lucide-react';
 
 export default function SidebarNav() {
   const pathname = usePathname();
@@ -129,6 +129,17 @@ export default function SidebarNav() {
       {hasAccess([]) && (
         <div className="pt-4 mt-4 border-t border-emerald-800/50">
           <p className="px-4 text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">Sistem</p>
+          <Link 
+            href="/admin/ptsp" 
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+              pathname === '/admin/ptsp' 
+                ? 'bg-emerald-800/80 text-white shadow-sm border border-emerald-700/50' 
+                : 'text-emerald-100 hover:bg-emerald-800/50 hover:text-white'
+            }`}
+          >
+            <Building2 className="w-5 h-5" />
+            Layanan PTSP
+          </Link>
           <Link 
             href="/admin/portal" 
             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${

@@ -1,0 +1,45 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const ticketId = searchParams.get('ticketId');
+
+    if (ticketId) {
+      const ptsp = await prisma.ptspRequest.findUnique({ where: { ticketId } });
+      if (!ptsp) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return NextResponse.json(ptsp);
+    }
+
+    const items = await prisma.ptspRequest.findMany({ orderBy: { createdAt: 'desc' } });
+    return NextResponse.json(items);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const json = await request.json();
+    
+    // Generate a short readable ticket ID (e.g. PTSP-XXXXX)
+    const randomHex = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const ticketId = `PTSP-${randomHex}`;
+
+    const ptsp = await prisma.ptspRequest.create({
+      data: {
+        ticketId,
+        name: json.name,
+        identityId: json.identityId,
+        serviceType: json.serviceType,
+        purpose: json.purpose,
+        contactWa: json.contactWa,
+      }
+    });
+    return NextResponse.json(ptsp);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+  }
+}

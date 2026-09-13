@@ -149,3 +149,17 @@ model PortalLink {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model PtspRequest {
+  id           String   @id @default(cuid())
+  ticketId     String   @unique
+  name         String
+  identityId   String   // NISN / NIK
+  serviceType  String
+  purpose      String
+  contactWa    String
+  status       String   @default("MENUNGGU") // MENUNGGU, DIPROSES, SELESAI, DITOLAK
+  response     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
