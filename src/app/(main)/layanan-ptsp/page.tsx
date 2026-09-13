@@ -82,6 +82,17 @@ export default function LayananPTSP() {
   const [isGuestSubmitting, setIsGuestSubmitting] = useState(false);
   const [isGuestSuccess, setIsGuestSuccess] = useState(false);
 
+  // Auto redirect after guestbook success
+  useEffect(() => {
+    if (isGuestSuccess) {
+      const timer = setTimeout(() => {
+        setActiveTab("form");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isGuestSuccess]);
+
   // Form State
   const [formData, setFormData] = useState({ name: "", identityId: "", serviceType: "Legalisir Ijazah / SKHUN", purpose: "", contactWa: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -295,7 +306,7 @@ export default function LayananPTSP() {
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Buku Tamu Disimpan!</h2>
                 <p className="text-slate-600 mb-8 max-w-sm mx-auto">Kunjungan Anda telah tercatat. Anda sekarang dapat melanjutkan untuk mengajukan permohonan PTSP.</p>
-                <button onClick={() => setActiveTab("form")} className="px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 mx-auto">
+                <button type="button" onClick={() => { setActiveTab("form"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 mx-auto">
                   Lanjut Pengajuan PTSP <Send className="w-4 h-4" />
                 </button>
               </div>
