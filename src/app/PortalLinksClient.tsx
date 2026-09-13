@@ -94,12 +94,23 @@ export default function PortalLinksClient({ links }: { links: any[] }) {
                 <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
                 <span className="ml-2 text-sm font-semibold text-slate-600">Portal Layanan Digital</span>
               </div>
-              <button 
-                onClick={() => setIframeUrl(null)}
-                className="text-slate-500 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors font-bold text-sm"
-              >
-                TUTUP
-              </button>
+              <div className="flex gap-2 items-center">
+                <a 
+                  href={iframeUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-slate-500 hover:text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors font-bold text-sm flex items-center gap-1"
+                  title="Buka di tab baru jika terjadi error sesi"
+                >
+                  <LucideIcons.ExternalLink className="w-4 h-4" /> Buka Normal
+                </a>
+                <button 
+                  onClick={() => setIframeUrl(null)}
+                  className="text-slate-500 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors font-bold text-sm"
+                >
+                  TUTUP
+                </button>
+              </div>
             </div>
             <iframe 
               src={iframeUrl} 
