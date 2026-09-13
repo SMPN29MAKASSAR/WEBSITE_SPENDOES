@@ -141,6 +141,17 @@ export default function SidebarNav() {
             Layanan PTSP
           </Link>
           <Link 
+            href="/admin/buku-tamu" 
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+              pathname === '/admin/buku-tamu' 
+                ? 'bg-emerald-800/80 text-white shadow-sm border border-emerald-700/50' 
+                : 'text-emerald-100 hover:bg-emerald-800/50 hover:text-white'
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            Buku Tamu
+          </Link>
+          <Link 
             href="/admin/portal" 
             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
               pathname === '/admin/portal' 
