@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { nama, email, kategori, isiAduan } = body;
+    const { nama, email, kategori, isiAduan, lampiran } = body;
 
     if (!nama || !kategori || !isiAduan) {
       return NextResponse.json({ error: "Nama, Kategori, and Isi Aduan are required" }, { status: 400 });
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
         email,
         kategori,
         isiAduan,
+        lampiran,
       },
     });
 

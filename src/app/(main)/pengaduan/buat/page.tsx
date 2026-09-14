@@ -17,7 +17,9 @@ import {
   Copy, 
   Check, 
   RotateCw,
-  Search
+  Search,
+  Paperclip,
+  CloudUpload
 } from "lucide-react";
 
 export default function BuatPengaduan() {
@@ -43,6 +45,7 @@ export default function BuatPengaduan() {
     kategori: "Fasilitas",
     isiAduan: "",
   });
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [successData, setSuccessData] = useState<{ tiketId: string } | null>(null);
   const [error, setError] = useState("");
@@ -61,10 +64,24 @@ export default function BuatPengaduan() {
     setSuccessData(null);
 
     try {
+      let lampiranUrl = "";
+      
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+           throw new Error("Ukuran file maksimal 2MB");
+        }
+        const uploadData = new FormData();
+        uploadData.append("file", file);
+        const uploadRes = await fetch("/api/upload", { method: "POST", body: uploadData });
+        if (!uploadRes.ok) throw new Error("Gagal mengunggah lampiran");
+        const { url } = await uploadRes.json();
+        lampiranUrl = url;
+      }
+
       const res = await fetch("/api/pengaduan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, lampiran: lampiranUrl }),
       });
 
       const data = await res.json();
@@ -74,6 +91,7 @@ export default function BuatPengaduan() {
 
       setSuccessData({ tiketId: data.data.tiketId });
       setFormData({ nama: "", email: "", kategori: "Fasilitas", isiAduan: "" });
+      setFile(null);
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan saat memproses pengaduan Anda.");
     } finally {
@@ -333,6 +351,40 @@ export default function BuatPengaduan() {
                           className="w-full p-4 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium transition"
                         />
                       </div>
+                    </div>
+
+                    {/* Lampiran (Opsional) */}
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
+                        <Paperclip className="w-4 h-4 text-orange-500" />
+                        Lampiran <span className="text-slate-400 font-normal">(Opsional)</span>
+                      </label>
+                      <label 
+                        htmlFor="lampiran" 
+                        className="cursor-pointer border-2 border-dashed border-slate-200 hover:border-orange-300 bg-slate-50 hover:bg-orange-50/50 rounded-2xl p-6 flex flex-col items-center justify-center text-center transition-colors group"
+                      >
+                        <div className="w-12 h-12 bg-orange-100 text-orange-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                          <CloudUpload className="w-6 h-6" />
+                        </div>
+                        {file ? (
+                          <div className="space-y-1">
+                            <p className="font-semibold text-slate-700 text-sm">{file.name}</p>
+                            <p className="text-xs text-slate-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            <p className="font-semibold text-slate-700 text-sm">Klik untuk upload file</p>
+                            <p className="text-xs text-slate-500">PDF, JPG, atau PNG (Maks. 2MB)</p>
+                          </div>
+                        )}
+                        <input 
+                          id="lampiran" 
+                          type="file" 
+                          className="hidden" 
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => setFile(e.target.files?.[0] || null)}
+                        />
+                      </label>
                     </div>
 
                     {/* Big Orange Submit Button */}

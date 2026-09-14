@@ -121,6 +121,7 @@ model Pengaduan {
   email       String?
   kategori    String
   isiAduan    String
+  lampiran    String?
   status      String   @default("MENUNGGU")
   tanggapan   String?
   createdAt   DateTime @default(now())

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { X, Loader2, MessageSquare, CheckCircle, Clock } from "lucide-react";
+import { X, Loader2, MessageSquare, CheckCircle, Clock, Paperclip } from "lucide-react";
 
 export default function AdminPengaduanPage() {
   const [pengaduans, setPengaduans] = useState<any[]>([]);
@@ -115,6 +115,20 @@ export default function AdminPengaduanPage() {
               <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Isi Laporan ({selected.kategori})</h4>
               <p className="text-slate-700 whitespace-pre-wrap">{selected.isiAduan}</p>
             </div>
+
+            {selected.lampiran && (
+              <div className="mb-6">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Lampiran</h4>
+                <a href={selected.lampiran} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition">
+                  <Paperclip className="w-4 h-4" /> Lihat Lampiran
+                </a>
+                {selected.lampiran.match(/\.(jpeg|jpg|gif|png)$/i) && (
+                  <div className="mt-3">
+                     <img src={selected.lampiran} alt="Lampiran" className="max-w-xs rounded-lg border border-slate-200 shadow-sm" />
+                  </div>
+                )}
+              </div>
+            )}
 
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
