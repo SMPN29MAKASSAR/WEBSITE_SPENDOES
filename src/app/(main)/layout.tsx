@@ -38,11 +38,10 @@ export default function MainLayout({
                 Profil <ChevronDown className="w-4 h-4" />
               </button>
               <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col text-slate-700 overflow-hidden text-sm">
-                <Link href="/profil#tentang" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700">Tentang Kami</Link>
-                <Link href="/profil#standar" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Standar Layanan</Link>
-                <Link href="/profil#sejarah" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Sejarah</Link>
-                <Link href="/profil#visimisi" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Visi Misi</Link>
+                <Link href="/profil/tentang-kami" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700">Tentang Kami</Link>
+                <Link href="/profil/visi-misi" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Visi Misi</Link>
                 <Link href="/profil/struktur-organisasi" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Struktur Organisasi</Link>
+                <Link href="/profil/standar-layanan" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Standar Layanan</Link>
               </div>
             </div>
 
@@ -95,11 +94,10 @@ export default function MainLayout({
             
             <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
               <span className="text-emerald-300 text-xs uppercase tracking-wider">Profil</span>
-              <Link href="/profil#tentang" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Tentang Kami</Link>
-              <Link href="/profil#standar" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Standar Layanan</Link>
-              <Link href="/profil#sejarah" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Sejarah</Link>
-              <Link href="/profil#visimisi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Visi Misi</Link>
+              <Link href="/profil/tentang-kami" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Tentang Kami</Link>
+              <Link href="/profil/visi-misi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Visi Misi</Link>
               <Link href="/profil/struktur-organisasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Struktur Organisasi</Link>
+              <Link href="/profil/standar-layanan" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Standar Layanan</Link>
             </div>
 
             <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
