@@ -240,10 +240,14 @@ export default async function Home() {
       <section className="w-full -mt-16 z-20 relative px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 lg:p-12">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 divide-x divide-slate-100">
               <div className="text-center px-4">
-                <p className="text-4xl font-bold font-jakarta text-emerald-600 mb-2">{totalSiswa || 'A'}</p>
-                <p className="text-sm text-slate-500 font-medium">{totalSiswa ? 'Siswa Aktif' : 'Akreditasi Sekolah'}</p>
+                <p className="text-4xl font-bold font-jakarta text-emerald-600 mb-2">{totalSiswa > 0 ? totalSiswa : '0'}</p>
+                <p className="text-sm text-slate-500 font-medium">Total Siswa</p>
+              </div>
+              <div className="text-center px-4">
+                <p className="text-4xl font-bold font-jakarta text-slate-900 mb-2">A</p>
+                <p className="text-sm text-slate-500 font-medium">Akreditasi Sekolah</p>
               </div>
               <div className="text-center px-4">
                 <p className="text-4xl font-bold font-jakarta text-slate-900 mb-2">{guruCount}+</p>

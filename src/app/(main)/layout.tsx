@@ -53,9 +53,6 @@ export default function MainLayout({
                 <Link href="#" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700">Kalender Akademik</Link>
                 <Link href="/galeri-prestasi" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Galeri Prestasi</Link>
                 <Link href="/info-publikasi/galeri" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Galeri Foto</Link>
-                <Link href="#" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Survei Evaluasi Kinerja Guru</Link>
-                <Link href="#" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">PPID</Link>
-                <Link href="#" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Laporan Hasil Survei</Link>
                 <Link href="/info-publikasi/guru" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Data Guru dan Pegawai</Link>
               </div>
             </div>
