@@ -11,6 +11,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         nama: json.nama,
         deskripsi: json.deskripsi || null,
         imageUrl: json.imageUrl || null,
+        pembinaId: json.pembinaId || null,
+        hari: json.hari || null,
+        waktuMulai: json.waktuMulai || null,
+        waktuSelesai: json.waktuSelesai || null,
+        lokasi: json.lokasi || null,
+        linkAdArt: json.linkAdArt || null,
       },
     });
     return NextResponse.json(data);

@@ -76,12 +76,21 @@ model Setting {
 }
 
 model Ekstrakurikuler {
-  id        String   @id @default(cuid())
-  nama      String
-  deskripsi String?
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  nama         String
+  deskripsi    String?
+  imageUrl     String?
+  
+  pembinaId    String?
+  pembina      Pegawai? @relation("PembinaEkskul", fields: [pembinaId], references: [id], onDelete: SetNull)
+  hari         String?  // format: "Senin,Rabu"
+  waktuMulai   String?  // format: "15:00"
+  waktuSelesai String?  // format: "17:00"
+  lokasi       String?
+  linkAdArt    String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Program {
@@ -101,6 +110,9 @@ model Pegawai {
   jabatan   String
   mapel     String?
   foto      String?
+  
+  ekstrakurikulerBinaan Ekstrakurikuler[] @relation("PembinaEkskul")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
