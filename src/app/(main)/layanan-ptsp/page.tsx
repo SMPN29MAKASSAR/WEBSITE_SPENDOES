@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Building2, FileText, CheckCircle2, Clock, AlertCircle, FileCheck2, Send, Search, X, ShieldCheck, FileWarning, Database, GraduationCap, Fingerprint, User, Building, Target, Phone, Users as UsersIcon, Printer, Copy, ArrowRight, Download } from "lucide-react";
-import html2canvas from "html2canvas";
 
 const SOP_SERVICES = [
   {
@@ -185,11 +184,15 @@ export default function LayananPTSP() {
     if (!cardElement) return;
 
     try {
-      const canvas = await html2canvas(cardElement, {
-        scale: 2,
-        backgroundColor: null, // preserve transparent corners if any
+      const { toPng } = await import('html-to-image');
+      const dataUrl = await toPng(cardElement, {
+        cacheBust: true,
+        pixelRatio: 2,
+        style: {
+          transform: 'none', // Reset any 3d transforms that might mess up the rendering
+          boxShadow: 'none',
+        }
       });
-      const dataUrl = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.download = `visitor-pass-${guestData.name || "guest"}.png`;
       link.href = dataUrl;
