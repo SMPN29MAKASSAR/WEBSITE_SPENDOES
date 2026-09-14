@@ -43,13 +43,11 @@ export default async function StrukturOrganisasiPage() {
           
           <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-4 sm:p-8 max-w-5xl mx-auto transition-transform hover:shadow-2xl duration-500 relative overflow-hidden group">
             {imageUrl ? (
-              <div className="relative w-full aspect-[4/3] sm:aspect-video rounded-2xl overflow-hidden bg-slate-50">
-                <Image 
+              <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center">
+                <img 
                   src={imageUrl} 
                   alt="Struktur Organisasi SMPN 29 Makassar" 
-                  fill 
-                  className="object-contain"
-                  unoptimized={true}
+                  className="w-full h-auto max-h-[80vh] object-contain"
                 />
               </div>
             ) : (

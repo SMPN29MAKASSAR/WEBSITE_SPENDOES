@@ -186,3 +186,15 @@ model GuestBook {
   contact   String
   createdAt DateTime @default(now())
 }
+model Administrasi {
+  id          String   @id @default(cuid())
+  nomor       String?
+  nama        String
+  kategori    String
+  tanggal     String?
+  ukuran      String?
+  akses       String   @default("Publik")
+  fileUrl     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

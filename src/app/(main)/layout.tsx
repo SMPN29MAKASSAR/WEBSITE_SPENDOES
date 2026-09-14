@@ -61,7 +61,7 @@ export default function MainLayout({
               </div>
             </div>
 
-            <Link href="https://portal.smpn29makassar.com" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors">Akademik</Link>
+            <Link href="/administrasi" className="hover:text-yellow-300 transition-colors">Administrasi</Link>
             <Link href="/ekstrakurikuler" className="hover:text-yellow-300 transition-colors">Ekstrakurikuler</Link>
             <Link href="/kontak" className="hover:text-yellow-300 transition-colors">Kontak</Link>
             
@@ -109,7 +109,7 @@ export default function MainLayout({
               <Link href="/galeri-prestasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Galeri Prestasi</Link>
             </div>
 
-            <Link href="https://portal.smpn29makassar.com" target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Akademik</Link>
+            <Link href="/administrasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Administrasi</Link>
             <Link href="/ekstrakurikuler" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Ekstrakurikuler</Link>
             <Link href="/kontak" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Kontak</Link>
             
