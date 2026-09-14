@@ -267,45 +267,45 @@ export default async function Home() {
       </section>
 
       {/* Sambutan Kepala Sekolah - Split Layout */}
-      <section className="container mx-auto px-6 py-24 lg:py-32">
-        <div className="flex flex-col lg:flex-row items-center gap-16 max-w-6xl mx-auto">
-          <div className="w-full lg:w-1/2 relative">
-            <div className="aspect-[4/5] rounded-3xl bg-slate-200 overflow-hidden relative shadow-2xl">
+      <section className="container mx-auto px-6 py-20 lg:py-28">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 max-w-5xl mx-auto">
+          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 relative mx-auto">
+            <div className="aspect-[3/4] rounded-3xl bg-slate-200 overflow-hidden relative shadow-2xl border-4 border-white">
               {getSetting('headmaster_photo', '') ? (
                 <Image src={getSetting('headmaster_photo', '')} alt="Kepala Sekolah" fill className="object-cover" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-tr from-slate-300 to-slate-100 flex items-center justify-center">
-                  <Users className="w-32 h-32 text-slate-400 opacity-20" />
-                  <span className="absolute text-slate-500 font-medium">Foto Kepala Sekolah</span>
+                  <Users className="w-20 h-20 text-slate-400 opacity-20" />
+                  <span className="absolute text-slate-500 font-medium text-sm">Foto Kepala Sekolah</span>
                 </div>
               )}
             </div>
             {/* Decorative Card */}
-            <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 max-w-xs hidden md:block">
-              <div className="flex gap-4 items-center">
-                <div className="bg-green-100 p-3 rounded-full">
-                  <Trophy className="w-6 h-6 text-green-600" />
+            <div className="absolute -bottom-5 -right-5 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 hidden md:block">
+              <div className="flex gap-3 items-center">
+                <div className="bg-green-100 p-2.5 rounded-full">
+                  <Trophy className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">Sekolah Adiwiyata</p>
-                  <p className="text-xs text-slate-500">Berbudaya Lingkungan</p>
+                  <p className="text-xs font-bold text-slate-900">Sekolah Adiwiyata</p>
+                  <p className="text-[10px] text-slate-500">Berbudaya Lingkungan</p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-2/3 mt-6 lg:mt-0">
             <h2 className="text-3xl lg:text-4xl font-extrabold font-jakarta text-slate-900 tracking-tight mb-6">
               Sambutan Kepala Sekolah
             </h2>
-            <div className="w-20 h-1.5 bg-emerald-500 rounded-full mb-8"></div>
+            <div className="w-16 h-1.5 bg-emerald-500 rounded-full mb-8"></div>
             <p className="text-lg text-slate-600 leading-relaxed mb-8 italic relative">
-              <span className="absolute -top-4 -left-4 text-6xl text-emerald-100 font-serif leading-none">&quot;</span>
+              <span className="absolute -top-4 -left-4 text-5xl text-emerald-100 font-serif leading-none">&quot;</span>
               {getSetting('headmaster_quote', 'Website ini merupakan jendela informasi dan komunikasi antara sekolah, siswa, orang tua, dan masyarakat. Kami terus berupaya meningkatkan kualitas layanan pendidikan yang inovatif dan berwawasan lingkungan.')}
-              <span className="absolute -bottom-8 -right-4 text-6xl text-emerald-100 font-serif leading-none">&quot;</span>
+              <span className="absolute -bottom-6 -right-2 text-5xl text-emerald-100 font-serif leading-none">&quot;</span>
             </p>
             <div>
               <p className="text-lg font-bold text-slate-900">{getSetting('headmaster_name', 'Nama Kepala Sekolah')}</p>
-              <p className="text-slate-500">Kepala UPT SPF SMPN 29 Makassar</p>
+              <p className="text-sm text-slate-500">Kepala UPT SPF SMPN 29 Makassar</p>
             </div>
           </div>
         </div>
