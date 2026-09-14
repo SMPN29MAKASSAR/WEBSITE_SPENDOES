@@ -378,7 +378,7 @@ export default function LayananPTSP() {
             <div className="flex justify-center items-center perspective-[1000px] h-[600px]">
               <div 
                 id="visitor-pass-card" 
-                className={`relative flex flex-col items-center transition-all duration-700 ${isGuestSuccess ? 'translate-y-[20px] scale-105 shadow-emerald-500/50' : 'rotate-y-[-10deg] rotate-x-[5deg] shadow-2xl'}`}
+                className={`relative flex flex-col items-center p-8 transition-all duration-700 ${isGuestSuccess ? 'translate-y-[20px] scale-105' : 'rotate-y-[-10deg] rotate-x-[5deg]'}`}
               >
                 {/* Simulated Lanyard / Clip */}
                 <div className="w-8 h-12 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -mb-4 relative">
@@ -386,9 +386,9 @@ export default function LayananPTSP() {
                 </div>
                 
                 {/* Card Body */}
-                <div className="relative w-80 bg-white rounded-[2rem] overflow-hidden border-4 border-slate-100 shadow-2xl pb-8">
+                <div className="relative w-80 bg-white rounded-[2rem] overflow-hidden border-4 border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] pb-8">
                   {/* ID Card Header */}
-                  <div className="bg-emerald-700 text-white p-6 pt-8 text-center relative overflow-hidden">
+                  <div className="bg-emerald-700 rounded-t-[1.75rem] text-white p-6 pt-8 text-center relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-full opacity-20">
                       <div className="w-40 h-40 bg-emerald-500 rounded-full absolute -top-10 -right-10 blur-xl"></div>
                       <div className="w-20 h-20 bg-yellow-400 rounded-full absolute bottom-0 -left-10 blur-xl"></div>
