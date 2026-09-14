@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, X, Loader2 } from "lucide-react";
 
@@ -10,6 +9,7 @@ type Pegawai = {
   jabatan: string;
   mapel: string | null;
   foto: string | null;
+  nomorWa: string | null;
 };
 
 export default function GuruAdminPage() {
@@ -24,6 +24,7 @@ export default function GuruAdminPage() {
     jabatan: "",
     mapel: "",
     foto: "",
+    nomorWa: "",
   });
 
   const [file, setFile] = useState<File | null>(null);
@@ -34,68 +35,69 @@ export default function GuruAdminPage() {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const res = await fetch("/api/pegawai");
-      const json = await res.json();
-      setData(json);
-    } catch (error) {
-      console.error("Error fetching data", error);
-    } finally {
-      setIsLoading(false);
+    const res = await fetch("/api/pegawai");
+    const json = await res.json();
+    setData(json);
+    setIsLoading(false);
+  };
+
+  const uploadFile = async (f: File) => {
+    const uploadData = new FormData();
+    uploadData.append("file", f);
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: uploadData,
+    });
+    if (res.ok) {
+      const { url } = await res.json();
+      return url;
     }
+    throw new Error("Upload failed");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
+
     try {
-      let uploadedUrl = formData.foto;
+      let photoUrl = formData.foto;
       if (file) {
-        const uploadData = new FormData();
-        uploadData.append("file", file);
-        const res = await fetch("/api/upload", { method: "POST", body: uploadData });
-        if (res.ok) {
-          const { url } = await res.json();
-          uploadedUrl = url;
-        } else {
-          alert("Gagal mengunggah foto.");
-          setIsUploading(false);
-          return;
-        }
+        photoUrl = await uploadFile(file);
       }
 
-      const submitData = { ...formData, foto: uploadedUrl };
+      const payload = { ...formData, foto: photoUrl };
 
       if (editingId) {
         await fetch(`/api/pegawai/${editingId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(submitData),
+          body: JSON.stringify(payload),
         });
       } else {
         await fetch("/api/pegawai", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(submitData),
+          body: JSON.stringify(payload),
         });
       }
+
       setIsModalOpen(false);
       resetForm();
       fetchData();
     } catch (error) {
-      console.error("Error saving data", error);
+      console.error(error);
+      alert("Terjadi kesalahan saat menyimpan data.");
+    } finally {
+      setIsUploading(false);
     }
-    setIsUploading(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus?")) return;
-    try {
-      await fetch(`/api/pegawai/${id}`, { method: "DELETE" });
-      fetchData();
-    } catch (error) {
-      console.error("Error deleting data", error);
-    }
+    if (!confirm("Yakin ingin menghapus pegawai ini?")) return;
+    await fetch(`/api/pegawai/${id}`, {
+      method: "DELETE",
+    });
+    fetchData();
   };
 
   const openEdit = (pegawai: Pegawai) => {
@@ -106,13 +108,14 @@ export default function GuruAdminPage() {
       jabatan: pegawai.jabatan,
       mapel: pegawai.mapel || "",
       foto: pegawai.foto || "",
+      nomorWa: pegawai.nomorWa || "",
     });
     setIsModalOpen(true);
   };
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ nama: "", nip: "", jabatan: "", mapel: "", foto: "" });
+    setFormData({ nama: "", nip: "", jabatan: "", mapel: "", foto: "", nomorWa: "" });
   };
 
   return (
@@ -144,6 +147,7 @@ export default function GuruAdminPage() {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">NIP</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Jabatan</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Mapel</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">No. WA</th>
                 <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Aksi</th>
               </tr>
             </thead>
@@ -154,6 +158,7 @@ export default function GuruAdminPage() {
                   <td className="px-4 py-3 text-sm text-slate-600">{item.nip || "-"}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{item.jabatan}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{item.mapel || "-"}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600">{item.nomorWa || "-"}</td>
                   <td className="px-4 py-3 text-right flex justify-end gap-2">
                     <button
                       onClick={() => openEdit(item)}
@@ -172,7 +177,7 @@ export default function GuruAdminPage() {
               ))}
               {data.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500 text-sm">
+                  <td colSpan={6} className="px-4 py-8 text-center text-slate-500 text-sm">
                     Belum ada data pegawai.
                   </td>
                 </tr>
@@ -184,8 +189,8 @@ export default function GuruAdminPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white w-full max-w-md rounded-xl p-6 shadow-xl">
-            <div className="flex justify-between items-center mb-4">
+          <div className="bg-white w-full max-w-md rounded-xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pt-2">
               <h3 className="text-lg font-bold text-slate-800">
                 {editingId ? "Edit Pegawai" : "Tambah Pegawai"}
               </h3>
@@ -233,6 +238,16 @@ export default function GuruAdminPage() {
                   type="text"
                   value={formData.mapel}
                   onChange={(e) => setFormData({ ...formData, mapel: e.target.value })}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Nomor WA (Opsional)</label>
+                <input
+                  type="text"
+                  placeholder="Cth: 628123456789"
+                  value={formData.nomorWa}
+                  onChange={(e) => setFormData({ ...formData, nomorWa: e.target.value })}
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>

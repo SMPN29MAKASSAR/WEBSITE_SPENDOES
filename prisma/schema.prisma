@@ -109,6 +109,7 @@ model Pegawai {
   nip       String?
   jabatan   String
   mapel     String?
+  nomorWa   String?
   foto      String?
   
   ekstrakurikulerBinaan Ekstrakurikuler[] @relation("PembinaEkskul")
@@ -198,3 +199,4 @@ model Administrasi {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+

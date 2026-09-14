@@ -20,6 +20,7 @@ export async function POST(request: Request) {
         jabatan: json.jabatan,
         mapel: json.mapel || null,
         foto: json.foto || null,
+        nomorWa: json.nomorWa || null,
       },
     });
     return NextResponse.json(data);
