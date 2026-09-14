@@ -42,7 +42,7 @@ export default function MainLayout({
                 <Link href="/profil#standar" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Standar Layanan</Link>
                 <Link href="/profil#sejarah" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Sejarah</Link>
                 <Link href="/profil#visimisi" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Visi Misi</Link>
-                <Link href="/profil#struktur" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Struktur Organisasi</Link>
+                <Link href="/profil/struktur-organisasi" className="px-4 py-3 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Struktur Organisasi</Link>
               </div>
             </div>
 
@@ -98,6 +98,8 @@ export default function MainLayout({
               <Link href="/profil#tentang" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Tentang Kami</Link>
               <Link href="/profil#standar" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Standar Layanan</Link>
               <Link href="/profil#sejarah" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Sejarah</Link>
+              <Link href="/profil#visimisi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Visi Misi</Link>
+              <Link href="/profil/struktur-organisasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Struktur Organisasi</Link>
             </div>
 
             <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
