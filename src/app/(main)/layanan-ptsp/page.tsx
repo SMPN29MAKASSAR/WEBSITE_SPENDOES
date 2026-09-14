@@ -376,16 +376,17 @@ export default function LayananPTSP() {
 
             {/* Right ID Card Preview */}
             <div className="flex justify-center items-center perspective-[1000px] h-[600px]">
-              <div 
-                id="visitor-pass-card" 
-                className={`relative flex flex-col items-center p-8 transition-all duration-700 ${isGuestSuccess ? 'translate-y-[20px] scale-105' : 'rotate-y-[-10deg] rotate-x-[5deg]'}`}
-              >
-                {/* Simulated Lanyard / Clip */}
-                <div className="w-8 h-12 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -mb-4 relative">
-                  <div className="w-4 h-4 bg-slate-400 rounded-full mt-2 shadow-inner"></div>
-                </div>
-                
-                {/* Card Body */}
+              <div className={`transition-all duration-700 ${isGuestSuccess ? 'translate-y-[20px] scale-105' : 'rotate-y-[-10deg] rotate-x-[5deg]'}`}>
+                <div 
+                  id="visitor-pass-card" 
+                  className="relative flex flex-col items-center p-8 bg-transparent"
+                >
+                  {/* Simulated Lanyard / Clip */}
+                  <div className="w-8 h-12 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -mb-4 relative">
+                    <div className="w-4 h-4 bg-slate-400 rounded-full mt-2 shadow-inner"></div>
+                  </div>
+                  
+                  {/* Card Body */}
                 <div className="relative w-80 bg-white rounded-[2rem] overflow-hidden border-4 border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] pb-8">
                   {/* ID Card Header */}
                   <div className="bg-emerald-700 rounded-t-[1.75rem] text-white p-6 pt-8 text-center relative overflow-hidden">
@@ -439,6 +440,7 @@ export default function LayananPTSP() {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         )}
 
