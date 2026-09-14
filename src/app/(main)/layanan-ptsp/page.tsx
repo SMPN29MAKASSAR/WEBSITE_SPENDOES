@@ -99,6 +99,13 @@ export default function LayananPTSP() {
     setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
     
+    // Generate an initial random ticket ID for the preview before submission
+    const initialId = "VST-" + Math.floor(100000 + Math.random() * 900000).toString();
+    setVisitorTicketId(initialId);
+    if (typeof window !== 'undefined') {
+      setQrCodeUrl(`${window.location.origin}/layanan-ptsp?track=${initialId}`);
+    }
+    
     // Auto track from URL if present
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -419,8 +426,8 @@ export default function LayananPTSP() {
                         </div>
                       )}
                     </div>
-                    <p className="text-[10px] font-mono text-slate-400 mt-2 font-bold tracking-widest">
-                      ID: {visitorTicketId || (time ? time.getTime().toString().slice(-8) : "00000000")}
+                    <p className="text-[10px] text-slate-500 mt-2 font-bold tracking-widest uppercase">
+                      Nomor Tiket: {visitorTicketId || "MENUNGGU..."}
                     </p>
                   </div>
                 </div>
