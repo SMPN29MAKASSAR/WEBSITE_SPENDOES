@@ -13,13 +13,24 @@ type Administrasi = {
   fileUrl: string;
 };
 
+const PREDEFINED_CATEGORIES = ["Surat Keputusan (SK)", "Tata Tertib", "Surat Edaran", "Kurikulum"];
+
 export default function AdministrasiAdminPage() {
   const [data, setData] = useState<Administrasi[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   
-  const initialForm = { nomor: "", nama: "", kategori: "Surat Keputusan (SK)", tanggal: "", ukuran: "", akses: "Publik", fileUrl: "" };
+  const initialForm = { 
+    nomor: "", 
+    nama: "", 
+    kategoriSelect: "Surat Keputusan (SK)", 
+    customKategori: "",
+    tanggal: "", 
+    ukuran: "", 
+    akses: "Publik", 
+    fileUrl: "" 
+  };
   const [formData, setFormData] = useState(initialForm);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -35,10 +46,22 @@ export default function AdministrasiAdminPage() {
     e.preventDefault();
     setIsSaving(true);
     
+    const finalKategori = formData.kategoriSelect === "Lainnya" ? formData.customKategori : formData.kategoriSelect;
+
+    const payload = {
+        nomor: formData.nomor,
+        nama: formData.nama,
+        kategori: finalKategori,
+        tanggal: formData.tanggal,
+        ukuran: formData.ukuran,
+        akses: formData.akses,
+        fileUrl: formData.fileUrl
+    };
+
     if (editingId) {
-      await fetch(`/api/administrasi/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
+      await fetch(`/api/administrasi/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     } else {
-      await fetch("/api/administrasi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
+      await fetch("/api/administrasi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     }
     setIsModalOpen(false); resetForm(); fetchData(); setIsSaving(false);
   };
@@ -50,6 +73,22 @@ export default function AdministrasiAdminPage() {
   };
 
   const resetForm = () => { setEditingId(null); setFormData(initialForm); };
+
+  const handleEditClick = (item: Administrasi) => {
+    const isCustom = !PREDEFINED_CATEGORIES.includes(item.kategori);
+    setFormData({ 
+      nomor: item.nomor || "", 
+      nama: item.nama, 
+      kategoriSelect: isCustom ? "Lainnya" : item.kategori,
+      customKategori: isCustom ? item.kategori : "", 
+      tanggal: item.tanggal || "", 
+      ukuran: item.ukuran || "", 
+      akses: item.akses, 
+      fileUrl: item.fileUrl 
+    });
+    setEditingId(item.id);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-6xl mx-auto mt-8">
@@ -98,7 +137,7 @@ export default function AdministrasiAdminPage() {
                       <a href={item.fileUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 text-blue-600 bg-blue-50 rounded hover:bg-blue-100" title="Buka Link">
                         <ExternalLink className="w-4 h-4" />
                       </a>
-                      <button onClick={() => { setEditingId(item.id); setFormData({ nomor: item.nomor || "", nama: item.nama, kategori: item.kategori, tanggal: item.tanggal || "", ukuran: item.ukuran || "", akses: item.akses, fileUrl: item.fileUrl }); setIsModalOpen(true); }} className="p-1.5 text-emerald-600 bg-emerald-50 rounded hover:bg-emerald-100">
+                      <button onClick={() => handleEditClick(item)} className="p-1.5 text-emerald-600 bg-emerald-50 rounded hover:bg-emerald-100">
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button onClick={() => handleDelete(item.id)} className="p-1.5 text-red-600 bg-red-50 rounded hover:bg-red-100">
@@ -139,12 +178,9 @@ export default function AdministrasiAdminPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Kategori *</label>
-                  <select required value={formData.kategori} onChange={e => setFormData({...formData, kategori: e.target.value})} className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
-                    <option value="Surat Keputusan (SK)">Surat Keputusan (SK)</option>
-                    <option value="Tata Tertib">Tata Tertib</option>
-                    <option value="Surat Edaran">Surat Edaran</option>
-                    <option value="Kurikulum">Kurikulum</option>
-                    <option value="Lainnya">Lainnya</option>
+                  <select required value={formData.kategoriSelect} onChange={e => setFormData({...formData, kategoriSelect: e.target.value})} className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                    {PREDEFINED_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    <option value="Lainnya">Lainnya (Ketik Manual)</option>
                   </select>
                 </div>
                 <div>
@@ -155,6 +191,13 @@ export default function AdministrasiAdminPage() {
                   </select>
                 </div>
               </div>
+
+              {formData.kategoriSelect === "Lainnya" && (
+                <div className="animate-in fade-in slide-in-from-top-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Nama Kategori Kustom *</label>
+                  <input required type="text" value={formData.customKategori} onChange={e => setFormData({...formData, customKategori: e.target.value})} className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ketik nama kategori..." />
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
