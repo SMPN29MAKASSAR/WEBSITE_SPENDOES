@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Save, Image as ImageIcon, Layout, Target, Phone, MessageSquareWarning } from "lucide-react";
+import { Loader2, Save, Image as ImageIcon, Layout, Target, Phone, MessageSquareWarning, Users } from "lucide-react";
 
 export default function SettingsTabs({ initialSettings }: { initialSettings: Record<string, string> }) {
   const router = useRouter();
@@ -12,6 +12,7 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
   const [portalFile, setPortalFile] = useState<File | null>(null);
   const [hmFile, setHmFile] = useState<File | null>(null);
   const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
+  const [orgFile, setOrgFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleChange = (key: string, value: string) => {
@@ -59,6 +60,14 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
         }
       }
 
+      if (orgFile) {
+        try {
+          finalSettings.struktur_organisasi_image = await uploadFile(orgFile);
+        } catch (e) {
+          alert("Gagal mengunggah struktur organisasi.");
+        }
+      }
+
       setIsUploading(false);
 
       // Format to array
@@ -92,6 +101,7 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
     { id: "visimisi", label: "Visi & Misi", icon: <Target className="w-4 h-4" /> },
     { id: "kontak", label: "Info Kontak", icon: <Phone className="w-4 h-4" /> },
     { id: "pengaduan", label: "Tips Pengaduan", icon: <MessageSquareWarning className="w-4 h-4" /> },
+    { id: "organisasi", label: "Struktur Organisasi", icon: <Users className="w-4 h-4" /> },
   ];
 
   return (
@@ -512,6 +522,28 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
                 placeholder={"Sampaikan laporan secara jelas.\nPilih kategori yang paling sesuai.\nSertakan nomor WhatsApp."}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 leading-relaxed"
               />
+            </div>
+          </div>
+        )}
+
+        {activeTab === "organisasi" && (
+          <div className="space-y-6 max-w-4xl">
+            <h3 className="text-lg font-bold text-slate-800 mb-2">Bagan Struktur Organisasi</h3>
+            <p className="text-sm text-slate-500 mb-6">Gambar ini akan ditampilkan pada menu Profil &gt; Struktur Organisasi.</p>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-3">Gambar Struktur Organisasi</label>
+              <div className="flex items-start gap-6">
+                {settings['struktur_organisasi_image'] && !orgFile && (
+                  <img src={settings['struktur_organisasi_image']} alt="Struktur Organisasi" className="w-48 h-auto object-contain rounded-lg border border-slate-200 shadow-sm" />
+                )}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => setOrgFile(e.target.files?.[0] || null)} 
+                  className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-colors"
+                />
+              </div>
             </div>
           </div>
         )}
