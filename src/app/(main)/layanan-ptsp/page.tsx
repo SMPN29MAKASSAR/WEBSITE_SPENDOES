@@ -82,17 +82,6 @@ export default function LayananPTSP() {
   const [isGuestSubmitting, setIsGuestSubmitting] = useState(false);
   const [isGuestSuccess, setIsGuestSuccess] = useState(false);
 
-  // Auto redirect after guestbook success
-  useEffect(() => {
-    if (isGuestSuccess) {
-      const timer = setTimeout(() => {
-        setActiveTab("form");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isGuestSuccess]);
-
   // Form State
   const [formData, setFormData] = useState({ name: "", identityId: "", serviceType: "Legalisir Ijazah / SKHUN", purpose: "", contactWa: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -305,15 +294,20 @@ export default function LayananPTSP() {
                   <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Buku Tamu Disimpan!</h2>
-                <p className="text-slate-600 mb-8 max-w-sm mx-auto">Kunjungan Anda telah tercatat. Anda sekarang dapat melanjutkan untuk mengajukan permohonan PTSP.</p>
-                <button type="button" onClick={() => { setActiveTab("form"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 mx-auto">
-                  Lanjut Pengajuan PTSP <Send className="w-4 h-4" />
-                </button>
+                <p className="text-slate-600 mb-8 max-w-sm mx-auto">Kunjungan Anda telah tercatat. Anda bisa mencetak kartu Visitor Pass Anda, atau langsung melanjutkan ke pengajuan PTSP.</p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button type="button" onClick={() => window.print()} className="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 shadow-lg shadow-slate-200 transition-all flex items-center justify-center gap-2">
+                    <Printer className="w-4 h-4" /> Cetak Kartu
+                  </button>
+                  <button type="button" onClick={() => { setActiveTab("form"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2">
+                    Lanjut PTSP <Send className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             )}
 
             {/* Right ID Card Preview */}
-            <div className="flex justify-center items-center perspective-[1000px] h-[500px]">
+            <div className="flex justify-center items-center perspective-[1000px] h-[500px] print-only">
               {/* Simulated Lanyard / Clip */}
               <div className="absolute top-0 w-8 h-16 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -translate-y-8 left-1/2 -translate-x-1/2">
                 <div className="w-4 h-4 bg-slate-400 rounded-full mt-2 shadow-inner"></div>
