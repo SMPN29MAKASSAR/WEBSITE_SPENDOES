@@ -34,3 +34,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }
 }
+export async function DELETE(request: Request) {
+  try {
+    const json = await request.json();
+    if (json.ids && Array.isArray(json.ids)) {
+      await prisma.guestBook.deleteMany({
+        where: { id: { in: json.ids } }
+      });
+      return NextResponse.json({ success: true });
+    }
+    return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+  }
+}
