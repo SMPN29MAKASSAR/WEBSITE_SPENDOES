@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Shield, KeyRound, Mail } from "lucide-react";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function LoginForm() {
     });
 
     if (res?.error) {
-      setError("Email atau kata sandi salah.");
+      setError("Autentikasi gagal. Periksa kembali ID dan Sandi.");
       setLoading(false);
     } else {
       router.push("/admin/dashboard");
@@ -34,44 +35,55 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium text-center">
+        <div className="bg-red-900/30 border border-red-500/30 text-red-400 p-3 rounded-lg text-xs font-medium text-center">
           {error}
         </div>
       )}
+      
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="email">Email atau NISN/NIP</label>
-        <input 
-          type="email" 
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
-          placeholder="Masukkan email atau NISN/NIP"
-        />
-      </div>
-      <div>
-        <div className="flex justify-between items-center mb-1">
-          <label className="block text-sm font-medium text-slate-700" htmlFor="password">Kata Sandi</label>
-          <a href="#" className="text-xs text-blue-600 hover:underline">Lupa Sandi?</a>
+        <label className="block text-[10px] font-bold text-[#55826b] mb-1.5 uppercase tracking-widest" htmlFor="email">ID Pengguna (Email / NISN)</label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#55826b]">
+            <Mail className="w-4 h-4" />
+          </div>
+          <input 
+            type="text" 
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#0a261a] border border-[#1b4431] text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all text-sm placeholder:text-[#375e4a]"
+            placeholder="Masukkan ID Anda..."
+          />
         </div>
-        <input 
-          type="password" 
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
-          placeholder="••••••••"
-        />
+      </div>
+
+      <div>
+        <div className="flex justify-between items-center mb-1.5">
+          <label className="block text-[10px] font-bold text-[#55826b] uppercase tracking-widest" htmlFor="password">Kata Sandi</label>
+        </div>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#55826b]">
+            <KeyRound className="w-4 h-4" />
+          </div>
+          <input 
+            type="password" 
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#0a261a] border border-[#1b4431] text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all text-sm placeholder:text-[#375e4a]"
+            placeholder="Masukkan Sandi..."
+          />
+        </div>
       </div>
       
       <button 
         type="submit" 
         disabled={loading}
-        className="w-full py-3.5 mt-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 mt-6 bg-[#f97316] text-white rounded-lg font-bold hover:bg-[#ea580c] transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-70 disabled:cursor-not-allowed"
       >
-        {loading ? "Memproses..." : "Masuk"}
+        {loading ? "MEMPROSES..." : "AKSES SISTEM"} <Shield className="w-4 h-4" />
       </button>
     </form>
   );
