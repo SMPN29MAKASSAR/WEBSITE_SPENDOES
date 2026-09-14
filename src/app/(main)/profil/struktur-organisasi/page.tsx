@@ -15,6 +15,9 @@ export default async function StrukturOrganisasiPage() {
   });
 
   const imageUrl = setting?.value;
+  const proxiedImageUrl = imageUrl?.includes('i.ibb.co') 
+    ? `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl.replace('https://', ''))}`
+    : imageUrl;
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -42,10 +45,10 @@ export default async function StrukturOrganisasiPage() {
           <div className="w-16 h-1 bg-[#117b66] mx-auto rounded-full mb-10"></div>
           
           <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-4 sm:p-8 max-w-5xl mx-auto transition-transform hover:shadow-2xl duration-500 relative overflow-hidden group">
-            {imageUrl ? (
+            {proxiedImageUrl ? (
               <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center">
                 <img 
-                  src={imageUrl} 
+                  src={proxiedImageUrl} 
                   alt="Struktur Organisasi SMPN 29 Makassar" 
                   className="w-full h-auto max-h-[80vh] object-contain"
                 />

@@ -593,10 +593,12 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
             
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-3">Gambar Struktur Organisasi</label>
-              <div className="flex items-start gap-6">
-                {settings['struktur_organisasi_image'] && !orgFile && (
-                  <img src={settings['struktur_organisasi_image']} alt="Struktur Organisasi" className="w-48 h-auto object-contain rounded-lg border border-slate-200 shadow-sm" />
-                )}
+              <div className="flex flex-col sm:flex-row items-start gap-6">
+                {orgFile ? (
+                  <img src={URL.createObjectURL(orgFile)} alt="Preview Baru" className="w-64 h-auto object-contain rounded-lg border border-slate-200 shadow-sm" />
+                ) : settings['struktur_organisasi_image'] ? (
+                  <img src={settings['struktur_organisasi_image'].includes('i.ibb.co') ? `https://images.weserv.nl/?url=${encodeURIComponent(settings['struktur_organisasi_image'].replace('https://', ''))}` : settings['struktur_organisasi_image']} alt="Struktur Organisasi" className="w-64 h-auto object-contain rounded-lg border border-slate-200 shadow-sm" />
+                ) : null}
                 <input 
                   type="file" 
                   accept="image/*" 
