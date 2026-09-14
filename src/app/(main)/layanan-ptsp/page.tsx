@@ -122,21 +122,6 @@ export default function LayananPTSP() {
 
   const performTrack = async (idToTrack: string) => {
     setIsTracking(true);
-    
-    // Check if it's a Visitor Pass Ticket
-    if (idToTrack.startsWith("VST-")) {
-      setTimeout(() => {
-        setTrackResult({
-          ticketId: idToTrack,
-          name: "Tamu (Buku Tamu)",
-          serviceType: "Kunjungan / Bertamu",
-          status: "SELESAI", // Or generic tracked status
-          createdAt: new Date().toISOString()
-        });
-        setIsTracking(false);
-      }, 500);
-      return;
-    }
 
     try {
       const res = await fetch(`/api/ptsp?ticketId=${idToTrack}`);

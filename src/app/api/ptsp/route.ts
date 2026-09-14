@@ -7,6 +7,32 @@ export async function GET(request: Request) {
     const ticketId = searchParams.get('ticketId');
 
     if (ticketId) {
+      if (ticketId.startsWith("VST-")) {
+        const idPart = ticketId.replace("VST-", "").toLowerCase();
+        // Since sqlite doesn't strictly enforce case, startsWith usually works. 
+        // But to be safe, let's fetch all guests and find the one that matches if startsWith throws an error, or just use startsWith.
+        const guest = await prisma.guestBook.findFirst({
+          where: {
+            id: {
+              startsWith: idPart
+            }
+          }
+        });
+        
+        if (!guest) {
+           return NextResponse.json({ error: 'Not found' }, { status: 404 });
+        }
+        
+        return NextResponse.json({
+          ticketId: ticketId,
+          name: `${guest.name} (${guest.agency})`,
+          serviceType: "Kunjungan / Bertamu",
+          purpose: guest.purpose,
+          status: "SELESAI",
+          createdAt: guest.createdAt
+        });
+      }
+
       const ptsp = await prisma.ptspRequest.findUnique({ where: { ticketId } });
       if (!ptsp) return NextResponse.json({ error: 'Not found' }, { status: 404 });
       return NextResponse.json(ptsp);
