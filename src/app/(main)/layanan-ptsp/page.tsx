@@ -375,60 +375,66 @@ export default function LayananPTSP() {
             )}
 
             {/* Right ID Card Preview */}
-            <div className="flex justify-center items-center perspective-[1000px] h-[500px]">
-              {/* Simulated Lanyard / Clip */}
-              <div className="absolute top-0 w-8 h-16 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -translate-y-8 left-1/2 -translate-x-1/2">
-                <div className="w-4 h-4 bg-slate-400 rounded-full mt-2 shadow-inner"></div>
-              </div>
-              
-              <div id="visitor-pass-card" className={`relative w-80 h-[450px] bg-white rounded-[2rem] overflow-hidden transition-all duration-700 border-4 border-slate-100 ${isGuestSuccess ? 'translate-y-[20px] scale-105 shadow-2xl shadow-emerald-500/50' : 'rotate-y-[-10deg] rotate-x-[5deg] shadow-2xl'}`}>
-                {/* ID Card Header */}
-                <div className="bg-emerald-700 text-white p-6 pt-8 text-center relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full opacity-20">
-                    <div className="w-40 h-40 bg-emerald-500 rounded-full absolute -top-10 -right-10 blur-xl"></div>
-                    <div className="w-20 h-20 bg-yellow-400 rounded-full absolute bottom-0 -left-10 blur-xl"></div>
-                  </div>
-                  <h3 className="relative font-bold text-lg tracking-wider mb-1">VISITOR PASS</h3>
-                  <p className="relative text-xs text-emerald-200 font-mono">PTSP SMPN 29 MAKASSAR</p>
+            <div className="flex justify-center items-center perspective-[1000px] h-[600px]">
+              <div 
+                id="visitor-pass-card" 
+                className={`relative flex flex-col items-center transition-all duration-700 ${isGuestSuccess ? 'translate-y-[20px] scale-105 shadow-emerald-500/50' : 'rotate-y-[-10deg] rotate-x-[5deg] shadow-2xl'}`}
+              >
+                {/* Simulated Lanyard / Clip */}
+                <div className="w-8 h-12 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -mb-4 relative">
+                  <div className="w-4 h-4 bg-slate-400 rounded-full mt-2 shadow-inner"></div>
                 </div>
+                
+                {/* Card Body */}
+                <div className="relative w-80 bg-white rounded-[2rem] overflow-hidden border-4 border-slate-100 shadow-2xl pb-8">
+                  {/* ID Card Header */}
+                  <div className="bg-emerald-700 text-white p-6 pt-8 text-center relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full opacity-20">
+                      <div className="w-40 h-40 bg-emerald-500 rounded-full absolute -top-10 -right-10 blur-xl"></div>
+                      <div className="w-20 h-20 bg-yellow-400 rounded-full absolute bottom-0 -left-10 blur-xl"></div>
+                    </div>
+                    <h3 className="relative font-bold text-lg tracking-wider mb-1">VISITOR PASS</h3>
+                    <p className="relative text-xs text-emerald-200 font-mono">PTSP SMPN 29 MAKASSAR</p>
+                  </div>
 
-                {/* ID Card Photo Area */}
-                <div className="flex justify-center -mt-12 relative z-10">
-                  <div className="w-24 h-24 bg-white rounded-full p-1 shadow-lg border border-slate-100">
-                    <div className="w-full h-full bg-slate-50 rounded-full flex items-center justify-center">
-                      <User className="w-10 h-10 text-slate-300" />
+                  {/* ID Card Photo Area */}
+                  <div className="flex justify-center -mt-12 relative z-10">
+                    <div className="w-24 h-24 bg-white rounded-full p-1 shadow-lg border border-slate-100">
+                      <div className="w-full h-full bg-slate-50 rounded-full flex items-center justify-center">
+                        <User className="w-10 h-10 text-slate-300" />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* ID Card Details */}
-                <div className="p-6 text-center space-y-4">
-                  <div>
-                    <h4 className="text-xl font-bold text-slate-800 break-words leading-tight">{guestData.name || "Nama Pengunjung"}</h4>
-                    <p className="text-emerald-600 font-bold uppercase text-xs mt-1 tracking-widest">{guestData.agency || "Instansi / Asal"}</p>
-                  </div>
-
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-left space-y-2 mt-4">
+                  {/* ID Card Details */}
+                  <div className="p-6 pb-2 text-center space-y-4">
                     <div>
-                      <p className="text-[10px] uppercase text-slate-400 font-bold">Bertemu</p>
-                      <p className="text-sm font-semibold text-slate-700 truncate">{guestData.meetWith || "-"}</p>
+                      <h4 className="text-xl font-bold text-slate-800 break-words leading-tight">{guestData.name || "Nama Pengunjung"}</h4>
+                      <p className="text-emerald-600 font-bold uppercase text-xs mt-1 tracking-widest">{guestData.agency || "Instansi / Asal"}</p>
                     </div>
-                  </div>
 
-                  {/* Barcode / QR Code */}
-                  <div className="pt-2 flex flex-col items-center">
-                    <div className="p-2 bg-white rounded-lg border border-slate-100 shadow-sm inline-block">
-                      {qrCodeUrl ? (
-                        <QRCodeSVG value={qrCodeUrl} size={80} level="M" />
-                      ) : (
-                        <div className="w-[80px] h-[80px] bg-slate-100 rounded-md flex items-center justify-center animate-pulse">
-                          <Search className="w-5 h-5 text-slate-300" />
-                        </div>
-                      )}
+                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-left space-y-2 mt-4">
+                      <div>
+                        <p className="text-[10px] uppercase text-slate-400 font-bold">Bertemu</p>
+                        <p className="text-sm font-semibold text-slate-700 truncate">{guestData.meetWith || "-"}</p>
+                      </div>
                     </div>
-                    <p className="text-[10px] text-slate-500 mt-2 font-bold tracking-widest uppercase">
-                      Nomor Tiket: {visitorTicketId || "MENUNGGU..."}
-                    </p>
+
+                    {/* Barcode / QR Code */}
+                    <div className="pt-3 flex flex-col items-center">
+                      <div className="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm inline-block">
+                        {qrCodeUrl ? (
+                          <QRCodeSVG value={qrCodeUrl} size={120} level="M" />
+                        ) : (
+                          <div className="w-[120px] h-[120px] bg-slate-100 rounded-xl flex items-center justify-center animate-pulse">
+                            <Search className="w-6 h-6 text-slate-300" />
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 mt-3 font-bold tracking-widest uppercase">
+                        Nomor Tiket: {visitorTicketId || "MENUNGGU..."}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
