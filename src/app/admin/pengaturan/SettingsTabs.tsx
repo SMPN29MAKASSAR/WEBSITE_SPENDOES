@@ -2,7 +2,65 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Save, Image as ImageIcon, Layout, Target, Phone, MessageSquareWarning, Users } from "lucide-react";
+import { Loader2, Save, Image as ImageIcon, Layout, Target, Phone, MessageSquareWarning, Users, Trash2, Plus } from "lucide-react";
+
+function SocialMediaEditor({ settings, onChange }: { settings: any, onChange: (key: string, val: string) => void }) {
+  const [links, setLinks] = useState<any[]>(() => {
+    try { return JSON.parse(settings['social_media_links'] || '[]') } catch { return [] }
+  });
+
+  const handleAdd = () => {
+    const newLinks = [...links, { platform: 'Facebook', username: '', url: '' }];
+    setLinks(newLinks);
+    onChange('social_media_links', JSON.stringify(newLinks));
+  }
+
+  const handleUpdate = (index: number, key: string, val: string) => {
+    const newLinks = [...links];
+    newLinks[index][key] = val;
+    setLinks(newLinks);
+    onChange('social_media_links', JSON.stringify(newLinks));
+  }
+
+  const handleRemove = (index: number) => {
+    const newLinks = links.filter((_, i) => i !== index);
+    setLinks(newLinks);
+    onChange('social_media_links', JSON.stringify(newLinks));
+  }
+
+  return (
+    <div className="mt-8 border-t border-slate-200 pt-8">
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h3 className="text-lg font-bold text-slate-800">Sosial Media</h3>
+          <p className="text-sm text-slate-500">Kelola tautan sosial media resmi sekolah.</p>
+        </div>
+        <button type="button" onClick={handleAdd} className="flex items-center gap-1 text-sm bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded hover:bg-emerald-200">
+          <Plus className="w-4 h-4"/> Tambah
+        </button>
+      </div>
+      <div className="space-y-4">
+        {links.map((link, i) => (
+          <div key={i} className="flex flex-wrap md:flex-nowrap items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <select value={link.platform} onChange={e => handleUpdate(i, 'platform', e.target.value)} className="p-2.5 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+              <option value="Facebook">Facebook</option>
+              <option value="Instagram">Instagram</option>
+              <option value="YouTube">YouTube</option>
+              <option value="TikTok">TikTok</option>
+              <option value="Twitter">Twitter</option>
+            </select>
+            <input type="text" placeholder="Username / Label (Cth: @smpn29)" value={link.username} onChange={e => handleUpdate(i, 'username', e.target.value)} className="p-2.5 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 flex-1 min-w-[150px]" />
+            <input type="url" placeholder="URL (https://...)" value={link.url} onChange={e => handleUpdate(i, 'url', e.target.value)} className="p-2.5 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 flex-1 min-w-[200px]" />
+            <button type="button" onClick={() => handleRemove(i)} className="p-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+        {links.length === 0 && <p className="text-sm text-slate-400 italic bg-slate-50 p-4 rounded-lg border border-dashed border-slate-200 text-center">Belum ada sosial media yang ditambahkan.</p>}
+      </div>
+    </div>
+  )
+}
 
 export default function SettingsTabs({ initialSettings }: { initialSettings: Record<string, string> }) {
   const router = useRouter();
@@ -506,6 +564,8 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
                 />
               </div>
             </div>
+
+            <SocialMediaEditor settings={settings} onChange={handleChange} />
           </div>
         )}
 

@@ -52,6 +52,22 @@ export default async function KontakPage() {
 
   const mapsDirectUrl = "https://maps.google.com/?q=SMP+Negeri+29+Makassar";
 
+  let socialLinks: any[] = [];
+  try {
+    const rawSocial = getSetting('social_media_links', '');
+    if (rawSocial) {
+      socialLinks = JSON.parse(rawSocial);
+    } else {
+      socialLinks = [
+        { platform: 'Facebook', username: 'SMPN 29 Makassar', url: 'https://facebook.com' },
+        { platform: 'Instagram', username: '@smpn29makassar', url: 'https://instagram.com' },
+        { platform: 'YouTube', username: 'SMPN 29 Official', url: 'https://youtube.com' }
+      ];
+    }
+  } catch(e) {
+    socialLinks = [];
+  }
+
   return (
     <div className="flex flex-col items-center w-full pb-24 bg-slate-50/50">
       
@@ -351,54 +367,50 @@ export default async function KontakPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                {/* Facebook */}
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex flex-col items-center p-4 rounded-2xl border border-slate-200/80 hover:border-blue-300 hover:bg-blue-50/50 transition-all text-center"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                    </svg>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800">Facebook</span>
-                  <span className="text-xs text-slate-500 mt-0.5">SMPN 29 Makassar</span>
-                </a>
-
-                {/* Instagram */}
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex flex-col items-center p-4 rounded-2xl border border-slate-200/80 hover:border-pink-300 hover:bg-pink-50/50 transition-all text-center"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800">Instagram</span>
-                  <span className="text-xs text-slate-500 mt-0.5">@smpn29makassar</span>
-                </a>
-
-                {/* YouTube */}
-                <a
-                  href="https://youtube.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex flex-col items-center p-4 rounded-2xl border border-slate-200/80 hover:border-red-300 hover:bg-red-50/50 transition-all text-center"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800">YouTube</span>
-                  <span className="text-xs text-slate-500 mt-0.5">SMPN 29 Official</span>
-                </a>
-              </div>
+                  {socialLinks.length > 0 ? socialLinks.map((social: any, idx: number) => {
+                    let svgPath = "";
+                    let colors = "";
+                    
+                    if (social.platform === "Facebook") {
+                      svgPath = "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z";
+                      colors = "border-blue-200 hover:border-blue-300 hover:bg-blue-50/50 text-blue-600 bg-blue-50";
+                    } else if (social.platform === "Instagram") {
+                      svgPath = "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z";
+                      colors = "border-pink-200 hover:border-pink-300 hover:bg-pink-50/50 text-pink-600 bg-pink-50";
+                    } else if (social.platform === "YouTube") {
+                      svgPath = "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z";
+                      colors = "border-red-200 hover:border-red-300 hover:bg-red-50/50 text-red-600 bg-red-50";
+                    } else if (social.platform === "TikTok") {
+                      svgPath = "M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.24-2.37.59-4.84 2.21-6.53 1.34-1.4 3.23-2.3 5.18-2.45v4.06c-1.34.11-2.61.9-3.23 2.06-.57 1.05-.62 2.37-.15 3.47.46 1.05 1.48 1.84 2.62 2.06 1.17.22 2.41-.09 3.27-.85.83-.75 1.25-1.9 1.22-3.05-.03-4.83-.01-9.67-.02-14.5.01-.05.01-.1.02-.15z";
+                      colors = "border-slate-300 hover:border-slate-400 hover:bg-slate-100/50 text-slate-800 bg-slate-100";
+                    } else if (social.platform === "Twitter") {
+                      svgPath = "M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.195 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z";
+                      colors = "border-sky-200 hover:border-sky-300 hover:bg-sky-50/50 text-sky-500 bg-sky-50";
+                    }
+                    
+                    return (
+                      <a
+                        key={idx}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`group flex flex-col items-center p-4 rounded-2xl border border-slate-200/80 transition-all text-center ${colors.split(" ")[1]} ${colors.split(" ")[2]}`}
+                      >
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition-transform ${colors.split(" ")[3]} ${colors.split(" ")[4]}`}>
+                          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path d={svgPath}/>
+                          </svg>
+                        </div>
+                        <span className="text-sm font-bold text-slate-800">{social.platform}</span>
+                        <span className="text-xs text-slate-500 mt-0.5">{social.username}</span>
+                      </a>
+                    );
+                  }) : (
+                    <div className="col-span-3 text-center py-6 text-sm text-slate-500 italic">
+                      Belum ada sosial media yang ditambahkan.
+                    </div>
+                  )}
+                </div>
             </div>
 
           </div>
@@ -409,3 +421,4 @@ export default async function KontakPage() {
     </div>
   );
 }
+
