@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Building2, FileText, CheckCircle2, Clock, AlertCircle, FileCheck2, Send, Search, X, ShieldCheck, FileWarning, Database, GraduationCap, Fingerprint, User, Building, Target, Phone, Users as UsersIcon, Printer, Copy, ArrowRight } from "lucide-react";
+import { Building2, FileText, CheckCircle2, Clock, AlertCircle, FileCheck2, Send, Search, X, ShieldCheck, FileWarning, Database, GraduationCap, Fingerprint, User, Building, Target, Phone, Users as UsersIcon, Printer, Copy, ArrowRight, Download } from "lucide-react";
+import html2canvas from "html2canvas";
 
 const SOP_SERVICES = [
   {
@@ -81,17 +82,6 @@ export default function LayananPTSP() {
   const [guestData, setGuestData] = useState({ name: "", agency: "", purpose: "", meetWith: "", contact: "" });
   const [isGuestSubmitting, setIsGuestSubmitting] = useState(false);
   const [isGuestSuccess, setIsGuestSuccess] = useState(false);
-
-  // Auto redirect after guestbook success
-  useEffect(() => {
-    if (isGuestSuccess) {
-      const timer = setTimeout(() => {
-        setActiveTab("form");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isGuestSuccess]);
 
   // Form State
   const [formData, setFormData] = useState({ name: "", identityId: "", serviceType: "Legalisir Ijazah / SKHUN", purpose: "", contactWa: "" });
@@ -189,6 +179,26 @@ export default function LayananPTSP() {
       ))}
     </div>
   );
+
+  const handleDownloadPass = async () => {
+    const cardElement = document.getElementById("visitor-pass-card");
+    if (!cardElement) return;
+
+    try {
+      const canvas = await html2canvas(cardElement, {
+        scale: 2,
+        backgroundColor: null, // preserve transparent corners if any
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.download = `visitor-pass-${guestData.name || "guest"}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error("Gagal mengunduh ID Card:", error);
+      alert("Terjadi kesalahan saat mengunduh gambar.");
+    }
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20 pt-8 relative">
@@ -305,10 +315,10 @@ export default function LayananPTSP() {
                   <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Buku Tamu Disimpan!</h2>
-                <p className="text-slate-600 mb-8 max-w-sm mx-auto">Kunjungan Anda telah tercatat. Anda bisa mencetak kartu Visitor Pass Anda, atau langsung melanjutkan ke pengajuan PTSP.</p>
+                <p className="text-slate-600 mb-8 max-w-sm mx-auto">Kunjungan Anda telah tercatat. Anda bisa mengunduh kartu Visitor Pass Anda, atau langsung melanjutkan ke pengajuan PTSP.</p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <button type="button" onClick={() => window.print()} className="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 shadow-lg shadow-slate-200 transition-all flex items-center justify-center gap-2">
-                    <Printer className="w-4 h-4" /> Cetak Kartu
+                  <button type="button" onClick={handleDownloadPass} className="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 shadow-lg shadow-slate-200 transition-all flex items-center justify-center gap-2">
+                    <Download className="w-4 h-4" /> Unduh Gambar
                   </button>
                   <button type="button" onClick={() => { setActiveTab("form"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2">
                     Lanjut PTSP <Send className="w-4 h-4" />
@@ -318,13 +328,13 @@ export default function LayananPTSP() {
             )}
 
             {/* Right ID Card Preview */}
-            <div className="flex justify-center items-center perspective-[1000px] h-[500px] print-only">
+            <div className="flex justify-center items-center perspective-[1000px] h-[500px]">
               {/* Simulated Lanyard / Clip */}
               <div className="absolute top-0 w-8 h-16 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -translate-y-8 left-1/2 -translate-x-1/2">
                 <div className="w-4 h-4 bg-slate-400 rounded-full mt-2 shadow-inner"></div>
               </div>
               
-              <div className={`relative w-80 h-[450px] bg-white rounded-[2rem] overflow-hidden transition-all duration-700 border-4 border-slate-100 ${isGuestSuccess ? 'translate-y-[20px] scale-105 shadow-2xl shadow-emerald-500/50' : 'rotate-y-[-10deg] rotate-x-[5deg] shadow-2xl'}`}>
+              <div id="visitor-pass-card" className={`relative w-80 h-[450px] bg-white rounded-[2rem] overflow-hidden transition-all duration-700 border-4 border-slate-100 ${isGuestSuccess ? 'translate-y-[20px] scale-105 shadow-2xl shadow-emerald-500/50' : 'rotate-y-[-10deg] rotate-x-[5deg] shadow-2xl'}`}>
                 {/* ID Card Header */}
                 <div className="bg-emerald-700 text-white p-6 pt-8 text-center relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-full opacity-20">
@@ -364,16 +374,6 @@ export default function LayananPTSP() {
                     <p className="text-[10px] font-mono text-slate-400 mt-1">ID: {time ? time.getTime().toString().slice(-8) : "00000000"}</p>
                   </div>
                 </div>
-
-                {/* Success Overlay Effect */}
-                {isGuestSuccess && (
-                  <div className="absolute inset-0 bg-emerald-600/10 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in z-30">
-                    <div className="bg-emerald-600 text-white px-6 py-3 rounded-full font-bold shadow-2xl flex items-center gap-2 transform -rotate-12 scale-110">
-                      <Printer className="w-5 h-5" />
-                      PASS DICETAK
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -408,149 +408,93 @@ export default function LayananPTSP() {
 
         {/* Form Content */}
         {activeTab === "form" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-200">
-            {/* Left Form */}
-            <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/70 overflow-hidden w-full">
-              <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-orange-500 p-7 sm:p-8 text-white relative">
-                <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
-                <h2 className="text-2xl font-bold tracking-tight">Form Pengajuan Layanan</h2>
-                <p className="text-emerald-100 text-sm mt-1.5">
-                  Isi formulir berikut dengan data yang benar.
-                </p>
-              </div>
-              
-              <div className="p-7 sm:p-8">
-                {submittedTicket ? (
-                  <div className="text-center py-6">
-                    <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-3xl mx-auto flex items-center justify-center mb-5 shadow-inner">
-                      <CheckCircle2 className="w-9 h-9" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Permohonan Berhasil Dibuat!</h3>
-                    <p className="text-slate-600 text-sm max-w-md mx-auto mb-6">
-                      Terima kasih atas permohonan Anda. Harap simpan <strong>Nomor Tiket</strong> berikut untuk melacak perkembangan layanan:
-                    </p>
-                    
-                    <div className="inline-flex items-center gap-3 bg-slate-50 border-2 border-dashed border-emerald-300 px-5 py-3.5 rounded-2xl mb-6 shadow-sm">
-                      <span className="font-mono text-xl sm:text-2xl font-extrabold text-emerald-700 tracking-wider">
-                        {submittedTicket}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(submittedTicket);
-                          alert("Tiket tersalin: " + submittedTicket);
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition"
-                      >
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Salin</span>
-                      </button>
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                      <button 
-                        type="button"
-                        onClick={() => { setSubmittedTicket(""); setActiveTab("lacak"); setTrackId(submittedTicket); handleTrack({ preventDefault: () => {} } as any); }} 
-                        className="w-full sm:w-auto px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
-                      >
-                        Lacak Status <ArrowRight className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSubmittedTicket("")}
-                        className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition"
-                      >
-                        Buat Baru
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <form onSubmit={handlePtspSubmit} className="space-y-5">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Jenis Layanan</label>
-                        <select required value={formData.serviceType} onChange={e => setFormData({...formData, serviceType: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-slate-50">
-                          {SOP_SERVICES.map(s => <option key={s.id} value={s.title}>{s.title}</option>)}
-                          <option value="Lainnya">Lainnya...</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap</label>
-                        <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="Masukkan nama" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">NISN / NIK</label>
-                        <input type="text" required value={formData.identityId} onChange={e => setFormData({...formData, identityId: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="NISN / NIK" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
-                        <input type="text" required value={formData.contactWa} onChange={e => setFormData({...formData, contactWa: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="08..." />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Keperluan</label>
-                        <textarea required value={formData.purpose} onChange={e => setFormData({...formData, purpose: e.target.value})} rows={2} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="Jelaskan keperluan..."></textarea>
-                      </div>
-                      <button type="submit" disabled={isSubmitting} className="w-full py-4 mt-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex justify-center items-center gap-2 transform active:scale-95">
-                        {isSubmitting ? "Mengirim..." : <><Send className="w-5 h-5" /> Kirim Permohonan</>}
-                      </button>
-                    </form>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Right ID Card Preview (Also visible in Form Tab) */}
-            <div className="flex justify-center items-center perspective-[1000px] h-[500px] print-only">
-              {/* Simulated Lanyard / Clip */}
-              <div className="absolute top-0 w-8 h-16 bg-slate-300 rounded-t-full shadow-inner z-20 flex justify-center -translate-y-8 left-1/2 -translate-x-1/2">
-                <div className="w-4 h-4 bg-slate-400 rounded-full mt-2 shadow-inner"></div>
-              </div>
-              
-              <div className={`relative w-80 h-[450px] bg-white rounded-[2rem] overflow-hidden transition-all duration-700 border-4 border-slate-100 ${isGuestSuccess ? 'translate-y-[20px] scale-105 shadow-2xl shadow-emerald-500/50' : 'rotate-y-[-10deg] rotate-x-[5deg] shadow-2xl'}`}>
-                {/* ID Card Header */}
-                <div className="bg-emerald-700 text-white p-6 pt-8 text-center relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full opacity-20">
-                    <div className="w-40 h-40 bg-emerald-500 rounded-full absolute -top-10 -right-10 blur-xl"></div>
-                    <div className="w-20 h-20 bg-yellow-400 rounded-full absolute bottom-0 -left-10 blur-xl"></div>
-                  </div>
-                  <h3 className="relative font-bold text-lg tracking-wider mb-1">VISITOR PASS</h3>
-                  <p className="relative text-xs text-emerald-200 font-mono">PTSP SMPN 29 MAKASSAR</p>
-                </div>
-
-                {/* ID Card Photo Area */}
-                <div className="flex justify-center -mt-12 relative z-10">
-                  <div className="w-24 h-24 bg-white rounded-full p-1 shadow-lg border border-slate-100">
-                    <div className="w-full h-full bg-slate-50 rounded-full flex items-center justify-center">
-                      <User className="w-10 h-10 text-slate-300" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* ID Card Details */}
-                <div className="p-6 text-center space-y-4">
-                  <div>
-                    <h4 className="text-xl font-bold text-slate-800 break-words leading-tight">{guestData.name || "Nama Pengunjung"}</h4>
-                    <p className="text-emerald-600 font-bold uppercase text-xs mt-1 tracking-widest">{guestData.agency || "Instansi / Asal"}</p>
-                  </div>
-
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-left space-y-2 mt-4">
-                    <div>
-                      <p className="text-[10px] uppercase text-slate-400 font-bold">Bertemu</p>
-                      <p className="text-sm font-semibold text-slate-700 truncate">{guestData.meetWith || "-"}</p>
-                    </div>
-                  </div>
-
-                  {/* Barcode */}
-                  <div className="pt-2">
-                    {renderBarcode()}
-                    <p className="text-[10px] font-mono text-slate-400 mt-1">ID: {time ? time.getTime().toString().slice(-8) : "00000000"}</p>
-                  </div>
-                </div>
-
-                {/* Success Overlay Effect explicitly omitted here so it doesn't cover the card in the form view */}
-              </div>
+          <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/70 overflow-hidden w-full">
+            <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-orange-500 p-7 sm:p-8 text-white relative">
+              <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
+              <h2 className="text-2xl font-bold tracking-tight">Form Pengajuan Layanan</h2>
+              <p className="text-emerald-100 text-sm mt-1.5">
+                Isi formulir berikut dengan data yang benar.
+              </p>
             </div>
             
+            <div className="p-7 sm:p-8">
+              {submittedTicket ? (
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-3xl mx-auto flex items-center justify-center mb-5 shadow-inner">
+                    <CheckCircle2 className="w-9 h-9" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Permohonan Berhasil Dibuat!</h3>
+                  <p className="text-slate-600 text-sm max-w-md mx-auto mb-6">
+                    Terima kasih atas permohonan Anda. Harap simpan <strong>Nomor Tiket</strong> berikut untuk melacak perkembangan layanan:
+                  </p>
+                  
+                  <div className="inline-flex items-center gap-3 bg-slate-50 border-2 border-dashed border-emerald-300 px-5 py-3.5 rounded-2xl mb-6 shadow-sm">
+                    <span className="font-mono text-xl sm:text-2xl font-extrabold text-emerald-700 tracking-wider">
+                      {submittedTicket}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(submittedTicket);
+                        alert("Tiket tersalin: " + submittedTicket);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Salin</span>
+                    </button>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                    <button 
+                      type="button"
+                      onClick={() => { setSubmittedTicket(""); setActiveTab("lacak"); setTrackId(submittedTicket); handleTrack({ preventDefault: () => {} } as any); }} 
+                      className="w-full sm:w-auto px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                    >
+                      Lacak Status <ArrowRight className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSubmittedTicket("")}
+                      className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition"
+                    >
+                      Buat Baru
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <form onSubmit={handlePtspSubmit} className="space-y-5">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Jenis Layanan</label>
+                      <select required value={formData.serviceType} onChange={e => setFormData({...formData, serviceType: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-slate-50">
+                        {SOP_SERVICES.map(s => <option key={s.id} value={s.title}>{s.title}</option>)}
+                        <option value="Lainnya">Lainnya...</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+                      <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="Masukkan nama" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">NISN / NIK</label>
+                      <input type="text" required value={formData.identityId} onChange={e => setFormData({...formData, identityId: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="NISN / NIK" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
+                      <input type="text" required value={formData.contactWa} onChange={e => setFormData({...formData, contactWa: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="08..." />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Keperluan</label>
+                      <textarea required value={formData.purpose} onChange={e => setFormData({...formData, purpose: e.target.value})} rows={2} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="Jelaskan keperluan..."></textarea>
+                    </div>
+                    <button type="submit" disabled={isSubmitting} className="w-full py-4 mt-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex justify-center items-center gap-2 transform active:scale-95">
+                      {isSubmitting ? "Mengirim..." : <><Send className="w-5 h-5" /> Kirim Permohonan</>}
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
           </div>
         )}
 
