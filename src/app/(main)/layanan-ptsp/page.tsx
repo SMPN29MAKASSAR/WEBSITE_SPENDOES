@@ -547,15 +547,7 @@ export default function LayananPTSP() {
                   </div>
                 </div>
 
-                {/* Success Overlay Effect (Hidden in Form view so it doesn't cover card) */}
-                {isGuestSuccess && activeTab === 'bukutamu' && (
-                  <div className="absolute inset-0 bg-emerald-600/10 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in z-30">
-                    <div className="bg-emerald-600 text-white px-6 py-3 rounded-full font-bold shadow-2xl flex items-center gap-2 transform -rotate-12 scale-110">
-                      <Printer className="w-5 h-5" />
-                      PASS DICETAK
-                    </div>
-                  </div>
-                )}
+                {/* Success Overlay Effect explicitly omitted here so it doesn't cover the card in the form view */}
               </div>
             </div>
             
