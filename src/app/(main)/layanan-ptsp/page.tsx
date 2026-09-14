@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Building2, FileText, CheckCircle2, Clock, AlertCircle, FileCheck2, Send, Search, X, ShieldCheck, FileWarning, Database, GraduationCap, Fingerprint, User, Building, Target, Phone, Users as UsersIcon, Printer, Copy, ArrowRight, Download } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 const SOP_SERVICES = [
   {
@@ -81,6 +82,8 @@ export default function LayananPTSP() {
   const [guestData, setGuestData] = useState({ name: "", agency: "", purpose: "", meetWith: "", contact: "" });
   const [isGuestSubmitting, setIsGuestSubmitting] = useState(false);
   const [isGuestSuccess, setIsGuestSuccess] = useState(false);
+  const [visitorTicketId, setVisitorTicketId] = useState("");
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   // Form State
   const [formData, setFormData] = useState({ name: "", identityId: "", serviceType: "Legalisir Ijazah / SKHUN", purpose: "", contactWa: "" });
@@ -95,8 +98,53 @@ export default function LayananPTSP() {
   useEffect(() => {
     setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
+    
+    // Auto track from URL if present
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const trackParam = urlParams.get('track');
+      if (trackParam) {
+        setActiveTab('lacak');
+        setTrackId(trackParam);
+        performTrack(trackParam);
+      }
+    }
+
     return () => clearInterval(timer);
   }, []);
+
+  const performTrack = async (idToTrack: string) => {
+    setIsTracking(true);
+    
+    // Check if it's a Visitor Pass Ticket
+    if (idToTrack.startsWith("VST-")) {
+      setTimeout(() => {
+        setTrackResult({
+          ticketId: idToTrack,
+          name: "Tamu (Buku Tamu)",
+          serviceType: "Kunjungan / Bertamu",
+          status: "SELESAI", // Or generic tracked status
+          createdAt: new Date().toISOString()
+        });
+        setIsTracking(false);
+      }, 500);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/ptsp?ticketId=${idToTrack}`);
+      if (res.ok) {
+        const data = await res.json();
+        setTrackResult(data);
+      } else {
+        setTrackResult({ error: "Tiket tidak ditemukan" });
+      }
+    } catch (error) {
+      setTrackResult({ error: "Terjadi kesalahan" });
+    } finally {
+      setIsTracking(false);
+    }
+  };
 
   const handleTabChange = (tab: "sop" | "bukutamu" | "form" | "lacak") => {
     if (tab === "form" && !hasFilledGuestBook) {
@@ -119,6 +167,15 @@ export default function LayananPTSP() {
         body: JSON.stringify(guestData),
       });
       if (res.ok) {
+        const result = await res.json();
+        // Fallback to random if no ID is returned
+        const idPart = (result.id || Math.random().toString().slice(2)).slice(0, 6).toUpperCase();
+        const newTicketId = `VST-${idPart}`;
+        setVisitorTicketId(newTicketId);
+        if (typeof window !== 'undefined') {
+          setQrCodeUrl(`${window.location.origin}/layanan-ptsp?track=${newTicketId}`);
+        }
+        
         setIsGuestSuccess(true);
         setHasFilledGuestBook(true);
         // Pre-fill some PTSP form data
@@ -154,30 +211,10 @@ export default function LayananPTSP() {
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!trackId) return;
-    setIsTracking(true);
-    try {
-      const res = await fetch(`/api/ptsp?ticketId=${trackId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setTrackResult(data);
-      } else {
-        setTrackResult({ error: "Tiket tidak ditemukan" });
-      }
-    } catch (error) {
-      setTrackResult({ error: "Terjadi kesalahan" });
-    } finally {
-      setIsTracking(false);
-    }
+    performTrack(trackId);
   };
 
-  // Barcode generator (dummy visual using divs)
-  const renderBarcode = () => (
-    <div className="flex gap-[2px] justify-center items-end h-8 opacity-70">
-      {[...Array(40)].map((_, i) => (
-        <div key={i} className="bg-slate-800" style={{ width: Math.random() > 0.5 ? '2px' : '4px', height: Math.random() > 0.3 ? '100%' : '70%' }}></div>
-      ))}
-    </div>
-  );
+  // Removed dummy barcode generator
 
   const handleDownloadPass = async () => {
     const cardElement = document.getElementById("visitor-pass-card");
@@ -371,10 +408,20 @@ export default function LayananPTSP() {
                     </div>
                   </div>
 
-                  {/* Barcode */}
-                  <div className="pt-2">
-                    {renderBarcode()}
-                    <p className="text-[10px] font-mono text-slate-400 mt-1">ID: {time ? time.getTime().toString().slice(-8) : "00000000"}</p>
+                  {/* Barcode / QR Code */}
+                  <div className="pt-2 flex flex-col items-center">
+                    <div className="p-2 bg-white rounded-lg border border-slate-100 shadow-sm inline-block">
+                      {qrCodeUrl ? (
+                        <QRCodeSVG value={qrCodeUrl} size={80} level="M" />
+                      ) : (
+                        <div className="w-[80px] h-[80px] bg-slate-100 rounded-md flex items-center justify-center animate-pulse">
+                          <Search className="w-5 h-5 text-slate-300" />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-[10px] font-mono text-slate-400 mt-2 font-bold tracking-widest">
+                      ID: {visitorTicketId || (time ? time.getTime().toString().slice(-8) : "00000000")}
+                    </p>
                   </div>
                 </div>
               </div>
