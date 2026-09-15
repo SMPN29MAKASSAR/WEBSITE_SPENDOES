@@ -214,10 +214,6 @@ export default function LayananPTSP() {
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!captchaToken) {
-      alert("Harap centang verifikasi Captcha (I'm not a robot).");
-      return;
-    }
     if (!trackId) return;
     performTrack(trackId);
   };
@@ -596,12 +592,7 @@ export default function LayananPTSP() {
                   Cari
                 </button>
               </form>
-              <div className="mt-4 flex justify-start">
-                <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-                  onChange={setCaptchaToken}
-                />
-              </div>
+              
             </div>
 
             {trackResult && (
@@ -730,6 +721,7 @@ export default function LayananPTSP() {
     </div>
   );
 }
+
 
 
 
