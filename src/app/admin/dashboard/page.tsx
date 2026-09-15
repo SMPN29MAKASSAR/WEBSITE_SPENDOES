@@ -6,6 +6,11 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
+  const postCount = await prisma.post.count();
+  const galeriCount = await prisma.galeri.count();
+  const userCount = await prisma.user.count();
+  const pengaduanCount = await prisma.pengaduan.count();
+
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Welcome Card */}
@@ -23,8 +28,8 @@ export default async function DashboardPage() {
             <Eye className="w-8 h-8 text-emerald-600" />
           </div>
           <div>
-            <p className="text-slate-500 text-sm font-medium">Pengunjung Hari Ini</p>
-            <p className="text-2xl font-bold font-jakarta text-slate-900">1,248</p>
+            <p className="text-slate-500 text-sm font-medium">Total Pengaduan</p>
+            <p className="text-2xl font-bold font-jakarta text-slate-900">{pengaduanCount}</p>
           </div>
         </div>
         
@@ -34,7 +39,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-slate-500 text-sm font-medium">Total Berita</p>
-            <p className="text-2xl font-bold font-jakarta text-slate-900">42</p>
+            <p className="text-2xl font-bold font-jakarta text-slate-900">{postCount}</p>
           </div>
         </div>
         
@@ -44,7 +49,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-slate-500 text-sm font-medium">Galeri Foto</p>
-            <p className="text-2xl font-bold font-jakarta text-slate-900">156</p>
+            <p className="text-2xl font-bold font-jakarta text-slate-900">{galeriCount}</p>
           </div>
         </div>
         
@@ -54,7 +59,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-slate-500 text-sm font-medium">Total Akun</p>
-            <p className="text-2xl font-bold font-jakarta text-slate-900">8</p>
+            <p className="text-2xl font-bold font-jakarta text-slate-900">{userCount}</p>
           </div>
         </div>
       </div>

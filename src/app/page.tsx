@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Building2, Megaphone, BookOpen, UserCircle, Globe, GraduationCap } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -16,6 +17,7 @@ export default async function PortalPage() {
 
   const bgImage = getSetting('portal_bg', '/school_bg.jpg');
   const slogan = getSetting('portal_slogan', 'Ber-akhlak, Unggul, Mandiri, Peduli Lingkungan, dan Berwawasan Global');
+  const logoUrl = getSetting('school_logo', '');
   
   const portalLinks = await prisma.portalLink.findMany({
     orderBy: { order: 'asc' }
@@ -40,8 +42,12 @@ export default async function PortalPage() {
       <div className="z-10 w-full max-w-5xl flex flex-col items-center text-center">
         {/* Logo and Header */}
         <div className="flex flex-col items-center mb-10">
-          <div className="bg-white p-4 rounded-full shadow-2xl mb-6">
-            <GraduationCap className="w-16 h-16 text-emerald-700" />
+          <div className="bg-white p-4 rounded-full shadow-2xl mb-6 flex items-center justify-center overflow-hidden w-24 h-24 relative">
+            {logoUrl ? (
+              <Image src={logoUrl} alt="Logo Sekolah" fill className="object-contain p-2" />
+            ) : (
+              <GraduationCap className="w-16 h-16 text-emerald-700" />
+            )}
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-lg">
             UPT SPF SMPN 29 Makassar
@@ -49,11 +55,11 @@ export default async function PortalPage() {
           <p className="text-emerald-100 text-lg md:text-xl font-medium tracking-wide">
             {slogan}
           </p>
-          <div className="mt-4 flex items-center justify-center gap-4 w-full">
-            <div className="h-px bg-emerald-400/50 flex-1 max-w-[100px]"></div>
-            <span className="text-emerald-300 font-semibold uppercase tracking-widest text-sm">Portal Layanan Digital</span>
-            <div className="h-px bg-emerald-400/50 flex-1 max-w-[100px]"></div>
-          </div>
+        </div>
+        <div className="mt-4 flex items-center justify-center gap-4 w-full">
+          <div className="h-px bg-emerald-400/50 flex-1 max-w-[100px]"></div>
+          <span className="text-emerald-300 font-semibold uppercase tracking-widest text-sm">Portal Layanan Digital</span>
+          <div className="h-px bg-emerald-400/50 flex-1 max-w-[100px]"></div>
         </div>
 
         {/* Quick Access Cards */}

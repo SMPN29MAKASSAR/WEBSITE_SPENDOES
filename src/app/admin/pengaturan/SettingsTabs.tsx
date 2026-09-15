@@ -72,6 +72,7 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
   const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
   const [orgFile, setOrgFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const handleChange = (key: string, value: string) => {
     setSettings({ ...settings, [key]: value });
@@ -93,6 +94,8 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
     try {
       let finalSettings = { ...settings };
       setIsUploading(true);
+
+      if (logoFile) { try { finalSettings.school_logo = await uploadFile(logoFile); } catch (e) { alert("Gagal mengunggah logo."); } }
 
       if (portalFile) {
         try {
@@ -152,6 +155,7 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
   };
 
   const tabs = [
+    { id: "identitas", label: "Logo & Identitas", icon: <ImageIcon className="w-4 h-4" /> },
     { id: "portal", label: "Latar Portal", icon: <ImageIcon className="w-4 h-4" /> },
     { id: "beranda", label: "Konten Utama & Sambutan", icon: <Layout className="w-4 h-4" /> },
     { id: "hero", label: "Hero & Banner", icon: <Target className="w-4 h-4" /> },
@@ -181,7 +185,40 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
 
       {/* Tabs Content */}
       <div className="p-8">
-        {activeTab === "portal" && (
+        {activeTab === "identitas" && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Logo Sekolah
+                </label>
+                <div className="flex gap-4 items-end">
+                  <div className="w-32 h-32 bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-300 relative">
+                    {logoFile ? (
+                      <img src={URL.createObjectURL(logoFile)} alt="Logo" className="w-full h-full object-contain" />
+                    ) : settings.school_logo ? (
+                      <img src={settings.school_logo} alt="Logo" className="w-full h-full object-contain" />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center w-full h-full text-slate-400">
+                        <ImageIcon className="w-8 h-8 mb-2" />
+                        <span className="text-xs">Kosong</span>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setLogoFile(e.target.files?.[0] || null)}
+                      className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 outline-none cursor-pointer"
+                    />
+                    <p className="text-xs text-slate-500 mt-2">Format transparan (PNG) direkomendasikan.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "portal" && (
           <div className="space-y-6 max-w-2xl">
             <div>
               <h3 className="text-lg font-bold text-slate-800 mb-2">Gambar Latar Belakang Portal</h3>
@@ -624,3 +661,4 @@ export default function SettingsTabs({ initialSettings }: { initialSettings: Rec
     </div>
   );
 }
+
