@@ -153,6 +153,10 @@ export default function LayananPTSP() {
 
   const handleGuestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert("Harap centang verifikasi Captcha (I'm not a robot).");
+      return;
+    }
     setIsGuestSubmitting(true);
     try {
       const res = await fetch("/api/buku-tamu", {
@@ -184,12 +188,16 @@ export default function LayananPTSP() {
 
   const handlePtspSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert("Harap centang verifikasi Captcha (I'm not a robot).");
+      return;
+    }
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/ptsp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, captchaToken }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -204,6 +212,10 @@ export default function LayananPTSP() {
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert("Harap centang verifikasi Captcha (I'm not a robot).");
+      return;
+    }
     if (!trackId) return;
     performTrack(trackId);
   };
@@ -338,7 +350,15 @@ export default function LayananPTSP() {
                     </div>
                   </div>
 
-                  <button type="submit" disabled={isGuestSubmitting} className="w-full py-4 mt-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex justify-center items-center gap-2 transform active:scale-95">
+                  
+                    <div className="mb-6 flex justify-center w-full">
+                      <ReCAPTCHA
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                        onChange={setCaptchaToken}
+                      />
+                    </div>
+                    <button
+                      type="submit" disabled={isGuestSubmitting} className="w-full py-4 mt-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex justify-center items-center gap-2 transform active:scale-95">
                     {isGuestSubmitting ? "Menyimpan..." : <><Fingerprint className="w-5 h-5" /> Simpan & Generate Pass</>}
                   </button>
                 </form>
