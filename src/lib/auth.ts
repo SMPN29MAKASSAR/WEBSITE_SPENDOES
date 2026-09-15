@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 /* eslint-disable */
 // @ts-nocheck
 import { NextAuthOptions } from "next-auth"
@@ -33,7 +34,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Bandingkan password
-        import bcrypt from "bcryptjs";
+        
         const isValid = await bcrypt.compare(credentials.password, user.password);
         
         if (isValid) {
@@ -65,5 +66,6 @@ export const authOptions: NextAuthOptions = {
     }
   }
 }
+
 
 

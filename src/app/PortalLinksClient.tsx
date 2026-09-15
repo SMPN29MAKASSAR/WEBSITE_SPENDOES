@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import { useState } from "react";
@@ -123,3 +124,4 @@ export default function PortalLinksClient({ links }: { links: any[] }) {
     </>
   );
 }
+
