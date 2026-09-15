@@ -1,7 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { prisma } from "@/lib/prisma";
-import { CalendarDays, BookOpen, PartyPopper, CalendarClock, Info } from "lucide-react";
+import { CalendarDays, BookOpen, PartyPopper, CalendarClock } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -10,9 +10,6 @@ export default async function KalenderPage() {
     orderBy: { startDate: "asc" }, 
   });
   
-  // Pisahkan berdasarkan semester
-  // Ganjil: Juli (7) - Desember (12)
-  // Genap: Januari (1) - Juni (6)
   const semesterGanjil = agendas.filter(a => {
     const month = new Date(a.startDate).getMonth() + 1;
     return month >= 7 && month <= 12;
@@ -39,8 +36,8 @@ export default async function KalenderPage() {
   };
 
   const renderTable = (data: any[], title: string, subtitle: string) => (
-    <div className="mb-16">
-      <div className="mb-6 flex flex-col gap-1">
+    <div className="mb-12">
+      <div className="mb-6 flex flex-col gap-1 px-2">
         <h2 className="text-2xl font-bold font-jakarta text-slate-900 flex items-center gap-3">
           <CalendarClock className="w-7 h-7 text-emerald-600" />
           {title}
@@ -49,14 +46,14 @@ export default async function KalenderPage() {
       </div>
 
       {data.length === 0 ? (
-        <div className="p-8 text-center bg-white border border-slate-200 rounded-2xl">
+        <div className="p-8 text-center bg-white border border-slate-200 rounded-2xl shadow-sm">
           <p className="text-slate-500">Belum ada agenda untuk semester ini.</p>
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm whitespace-nowrap md:whitespace-normal">
-              <thead className="bg-emerald-50 text-emerald-900 font-jakarta border-b border-emerald-100">
+              <thead className="bg-slate-50 text-slate-700 font-jakarta border-b border-slate-200">
                 <tr>
                   <th className="px-6 py-4 font-bold w-1/4">TANGGAL</th>
                   <th className="px-6 py-4 font-bold w-1/3">NAMA KEGIATAN</th>
@@ -90,25 +87,26 @@ export default async function KalenderPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] py-20 px-4 font-sans relative">
-      {/* Decorative background */}
-      <div className="absolute top-0 left-0 w-full h-80 bg-emerald-900 overflow-hidden pointer-events-none">
+    <div className="min-h-screen bg-slate-50 font-sans">
+      {/* Banner */}
+      <div className="bg-emerald-900 pt-32 pb-24 px-4 relative overflow-hidden">
         <div className="absolute opacity-10 right-0 top-0 translate-x-1/3 -translate-y-1/4">
           <CalendarClock className="w-96 h-96 text-white" />
         </div>
-      </div>
-      
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="mb-16 pt-8 text-white">
+        <div className="max-w-6xl mx-auto relative z-10 text-white text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-extrabold font-jakarta mb-4">Kalender Akademik</h1>
-          <p className="text-lg text-emerald-100 max-w-2xl">
+          <p className="text-lg text-emerald-100 max-w-2xl mx-auto md:mx-0">
             Jadwal lengkap kegiatan, hari libur, dan ujian SMPN 29 Makassar. Disusun berdasarkan semester untuk memudahkan pencarian agenda.
           </p>
         </div>
-        
-        {renderTable(semesterGanjil, "Semester Ganjil", "Bulan Juli s.d. Desember")}
-        {renderTable(semesterGenap, "Semester Genap", "Bulan Januari s.d. Juni")}
-
+      </div>
+      
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 -mt-10 relative z-20 pb-20">
+        <div className="bg-white/50 backdrop-blur-sm p-4 md:p-8 rounded-3xl border border-white shadow-xl">
+          {renderTable(semesterGanjil, "Semester Ganjil", "Bulan Juli s.d. Desember")}
+          {renderTable(semesterGenap, "Semester Genap", "Bulan Januari s.d. Juni")}
+        </div>
       </div>
     </div>
   );
