@@ -31,16 +31,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, content, createdAt, imageUrl } = body;
+    const { title, content, createdAt, imageUrl, externalUrl, publishedAt } = body;
 
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
     const postData: any = { title, content, authorId: userId };
-    if (imageUrl !== undefined) {
-      postData.imageUrl = imageUrl;
-    }
+    if (imageUrl !== undefined) { postData.imageUrl = imageUrl; }
+    if (externalUrl !== undefined) { postData.externalUrl = externalUrl; }
+    if (publishedAt) { postData.publishedAt = new Date(publishedAt); }
     
     if (createdAt) {
       // Ensure the date is valid and in ISO format
@@ -59,3 +59,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to create post" }, { status: 500 });
   }
 }
+

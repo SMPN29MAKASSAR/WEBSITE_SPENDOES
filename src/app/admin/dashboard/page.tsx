@@ -9,7 +9,12 @@ export default async function DashboardPage() {
   const postCount = await prisma.post.count();
   const galeriCount = await prisma.galeri.count();
   const userCount = await prisma.user.count();
-  const pengaduanCount = await prisma.pengaduan.count();
+  
+  // Calculate visitors
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayStat = await prisma.webStat.findUnique({ where: { date: today } });
+  const visitorsToday = todayStat?.views || 0;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -28,8 +33,8 @@ export default async function DashboardPage() {
             <Eye className="w-8 h-8 text-emerald-600" />
           </div>
           <div>
-            <p className="text-slate-500 text-sm font-medium">Total Pengaduan</p>
-            <p className="text-2xl font-bold font-jakarta text-slate-900">{pengaduanCount}</p>
+            <p className="text-slate-500 text-sm font-medium">Pengunjung Hari Ini</p>
+            <p className="text-2xl font-bold font-jakarta text-slate-900">{visitorsToday}</p>
           </div>
         </div>
         

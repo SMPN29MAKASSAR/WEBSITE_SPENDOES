@@ -152,12 +152,14 @@ export default async function BeritaPage(props: BeritaPageProps) {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {posts.map((post) => (
-                  <Link
-                    key={post.id}
-                    href={`/berita/${post.id}`}
-                    className="group flex flex-col bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                  >
+                  {posts.map((post) => (
+                    <Link
+                      key={post.id}
+                      href={post.externalUrl || `/berita/${post.id}`}
+                      target={post.externalUrl ? '_blank' : '_self'}
+                      rel={post.externalUrl ? 'noopener noreferrer' : ''}
+                      className="group flex flex-col bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                    >
                     {/* Image Container with Badge */}
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
                       {post.imageUrl ? (
@@ -183,7 +185,7 @@ export default async function BeritaPage(props: BeritaPageProps) {
                       {/* Date */}
                       <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-2.5">
                         <Calendar className="w-3.5 h-3.5 text-orange-500" />
-                        <span>{format(new Date(post.createdAt), "dd MMM yyyy", { locale: id })}</span>
+                        <span>{format(new Date((post.publishedAt || (post.publishedAt || post.createdAt))), "dd MMM yyyy", { locale: id })}</span>
                       </div>
 
                       {/* Title */}
@@ -266,7 +268,9 @@ export default async function BeritaPage(props: BeritaPageProps) {
                   recentPosts.map((recent, idx) => (
                     <Link
                       key={recent.id}
-                      href={`/berita/${recent.id}`}
+                      href={recent.externalUrl || `/berita/${recent.id}`}
+                      target={recent.externalUrl ? '_blank' : '_self'}
+                      rel={recent.externalUrl ? 'noopener noreferrer' : ''}
                       className={`group flex items-start gap-3.5 ${idx > 0 ? "pt-4" : ""}`}
                     >
                       {/* Small thumbnail */}
@@ -284,7 +288,7 @@ export default async function BeritaPage(props: BeritaPageProps) {
                         </h4>
                         <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-1.5 font-medium">
                           <Calendar className="w-3 h-3 text-orange-500" />
-                          <span>{format(new Date(recent.createdAt), "dd MMM yyyy", { locale: id })}</span>
+                          <span>{format(new Date((recent.publishedAt || (recent.publishedAt || recent.createdAt))), "dd MMM yyyy", { locale: id })}</span>
                         </div>
                       </div>
                     </Link>
@@ -328,3 +332,6 @@ export default async function BeritaPage(props: BeritaPageProps) {
     </div>
   );
 }
+
+
+

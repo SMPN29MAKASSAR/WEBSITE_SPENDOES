@@ -23,7 +23,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, content, createdAt, imageUrl } = body;
+    const { title, content, createdAt, imageUrl, externalUrl, publishedAt } = body;
     
     const updateData: any = { title, content };
     if (imageUrl !== undefined) {
@@ -59,3 +59,4 @@ export async function DELETE(
     return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
   }
 }
+
