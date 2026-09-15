@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 "use client";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -49,6 +50,7 @@ export default function BuatPengaduan() {
   });
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [successData, setSuccessData] = useState<{ tiketId: string } | null>(null);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -61,6 +63,10 @@ export default function BuatPengaduan() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert("Harap centang verifikasi Captcha (I'm not a robot).");
+      return;
+    }
     setLoading(true);
     setError("");
     setSuccessData(null);
@@ -390,6 +396,13 @@ export default function BuatPengaduan() {
                     </div>
 
                     {/* Big Orange Submit Button */}
+                    
+                    <div className="mb-6 flex justify-center w-full">
+                      <ReCAPTCHA
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                        onChange={setCaptchaToken}
+                      />
+                    </div>
                     <button
                       type="submit"
                       disabled={loading}
