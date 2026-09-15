@@ -57,7 +57,18 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
           </div>
 
           <Link href="/administrasi" className="hover:text-yellow-300 transition-colors">Administrasi</Link>
-          <Link href="/ekstrakurikuler" className="hover:text-yellow-300 transition-colors">Ekstrakurikuler</Link>
+          
+          <div className="relative group">
+            <button className="flex items-center gap-1 hover:text-yellow-300 transition-colors py-2">
+              Kesiswaan <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col text-slate-700 overflow-hidden text-[13px]">
+              <Link href="/ekstrakurikuler" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700">Ekstrakurikuler</Link>
+              <Link href="/kesiswaan/prestasi" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Prestasi Siswa</Link>
+              <Link href="/kesiswaan/mading" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Mading Digital</Link>
+            </div>
+          </div>
+
           <Link href="/kontak" className="hover:text-yellow-300 transition-colors">Kontak</Link>
           
           <div className="relative group">
@@ -105,7 +116,14 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
           </div>
 
           <Link href="/administrasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Administrasi</Link>
-          <Link href="/ekstrakurikuler" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Ekstrakurikuler</Link>
+          
+          <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
+            <span className="text-emerald-300 text-xs uppercase tracking-wider">Kesiswaan</span>
+            <Link href="/ekstrakurikuler" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Ekstrakurikuler</Link>
+            <Link href="/kesiswaan/prestasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Prestasi Siswa</Link>
+            <Link href="/kesiswaan/mading" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Mading Digital</Link>
+          </div>
+
           <Link href="/kontak" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Kontak</Link>
           
           <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
