@@ -8,11 +8,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'i.ibb.co',
+        hostname: '**',
       },
       {
-        protocol: 'https',
-        hostname: '**.imgbb.com',
+        protocol: 'http',
+        hostname: '**',
       }
     ],
   },
