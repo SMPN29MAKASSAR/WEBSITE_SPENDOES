@@ -145,9 +145,10 @@ model Pengaduan {
 
 model Prestasi {
   id        String   @id @default(cuid())
-  nama      String
+  namaSiswa String
+  namaLomba String
   tingkat   String?
-  tahun     String
+  tahun     Int
   deskripsi String?
   imageUrl  String?
   createdAt DateTime @default(now())
@@ -208,4 +209,38 @@ model WebStat {
   date     DateTime @unique
   views    Int      @default(1)
 }
+
+
+model Fasilitas {
+  id        String   @id @default(cuid())
+  nama      String
+  deskripsi String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+}
+
+model Agenda {
+  id          String   @id @default(cuid())
+  title       String
+  deskripsi   String?
+  startDate   DateTime
+  endDate     DateTime?
+  jenis       String   @default("kegiatan") // libur, ujian, kegiatan
+  createdAt   DateTime @default(now())
+}
+
+
+model KaryaSiswa {
+  id          String   @id @default(cuid())
+  judul       String
+  namaPenulis String
+  kelas       String?
+  kategori    String
+  content     String?
+  imageUrl    String?
+  status      String   @default("MENUNGGU")
+  createdAt   DateTime @default(now())
+}
+
+
 

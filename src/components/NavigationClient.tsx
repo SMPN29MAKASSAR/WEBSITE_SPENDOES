@@ -37,6 +37,7 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
             </button>
             <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col text-slate-700 overflow-hidden text-[13px]">
               <Link href="/profil/tentang-kami" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700">Tentang Kami</Link>
+                <Link href="/profil/fasilitas" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Fasilitas Sekolah</Link>
               <Link href="/profil/visi-misi" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Visi Misi</Link>
               <Link href="/profil/struktur-organisasi" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Struktur Organisasi</Link>
               <Link href="/profil/standar-layanan" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Standar Layanan</Link>
@@ -48,8 +49,8 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
               Info Publikasi <ChevronDown className="w-3.5 h-3.5" />
             </button>
             <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col text-slate-700 overflow-hidden text-[13px]">
-              <Link href="#" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700">Kalender Akademik</Link>
-              <Link href="/galeri-prestasi" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Galeri Prestasi</Link>
+              <Link href="/info-publikasi/kalender" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700">Kalender Akademik</Link>
+              
               <Link href="/info-publikasi/galeri" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Galeri Foto</Link>
               <Link href="/info-publikasi/guru" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Data Guru dan Pegawai</Link>
             </div>
@@ -90,6 +91,7 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
           <div className="flex flex-col gap-2 pl-4 border-l-2 border-emerald-600">
             <span className="text-emerald-300 text-xs uppercase tracking-wider">Profil</span>
             <Link href="/profil/tentang-kami" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Tentang Kami</Link>
+                <Link href="/profil/fasilitas" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Fasilitas Sekolah</Link>
             <Link href="/profil/visi-misi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Visi Misi</Link>
             <Link href="/profil/struktur-organisasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Struktur Organisasi</Link>
             <Link href="/profil/standar-layanan" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Standar Layanan</Link>
@@ -99,7 +101,7 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
             <span className="text-emerald-300 text-xs uppercase tracking-wider">Info Publikasi</span>
             <Link href="/info-publikasi/guru" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Data Guru dan Pegawai</Link>
             <Link href="/info-publikasi/galeri" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Galeri Foto</Link>
-            <Link href="/galeri-prestasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Galeri Prestasi</Link>
+            <Link href="/info-publikasi/kalender" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Kalender Akademik</Link>
           </div>
 
           <Link href="/administrasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Administrasi</Link>
@@ -120,3 +122,4 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
     </header>
   );
 }
+
