@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 "use client";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
