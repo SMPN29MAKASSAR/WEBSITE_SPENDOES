@@ -101,19 +101,7 @@ export default function SidebarNav() {
       )}
 
       
-      {hasAccess(["Admin Berita"]) && (
-        <Link 
-          href="/admin/mading" 
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-            pathname === '/admin/mading' 
-              ? 'bg-emerald-800/80 text-white shadow-sm border border-emerald-700/50' 
-              : 'text-emerald-100 hover:bg-emerald-800/50 hover:text-white'
-          }`}
-        >
-          <FileText className="w-5 h-5" />
-          Kelola Mading
-        </Link>
-      )}
+      
 
       {hasAccess(["Admin TU", "Admin Kurikulum"]) && (
         <Link 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import VisitorTracker from "@/components/VisitorTracker";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
@@ -20,8 +20,8 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${inter.variable} ${jakarta.variable} font-sans bg-slate-50 text-slate-800`}>
-        <VisitorTracker />
         {children}
+        <Analytics />
         <Script id="chatway" strategy="lazyOnload" src="https://cdn.chatway.app/widget.js?id=cTM1YJMiRoE9" />
       </body>
     </html>

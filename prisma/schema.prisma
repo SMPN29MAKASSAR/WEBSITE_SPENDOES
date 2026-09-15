@@ -230,17 +230,7 @@ model Agenda {
 }
 
 
-model KaryaSiswa {
-  id          String   @id @default(cuid())
-  judul       String
-  namaPenulis String
-  kelas       String?
-  kategori    String
-  content     String?
-  imageUrl    String?
-  status      String   @default("MENUNGGU")
-  createdAt   DateTime @default(now())
-}
+
 
 
 

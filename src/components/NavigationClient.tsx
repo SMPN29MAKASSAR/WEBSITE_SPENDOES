@@ -65,7 +65,7 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
             <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col text-slate-700 overflow-hidden text-[13px]">
               <Link href="/ekstrakurikuler" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700">Ekstrakurikuler</Link>
               <Link href="/kesiswaan/prestasi" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Prestasi Siswa</Link>
-              <Link href="/kesiswaan/mading" className="px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 border-t border-slate-100">Mading Digital</Link>
+              
             </div>
           </div>
 
@@ -121,7 +121,7 @@ export default function NavigationClient({ logoUrl }: { logoUrl?: string }) {
             <span className="text-emerald-300 text-xs uppercase tracking-wider">Kesiswaan</span>
             <Link href="/ekstrakurikuler" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Ekstrakurikuler</Link>
             <Link href="/kesiswaan/prestasi" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Prestasi Siswa</Link>
-            <Link href="/kesiswaan/mading" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Mading Digital</Link>
+            
           </div>
 
           <Link href="/kontak" onClick={() => setMobileMenuOpen(false)} className="hover:text-yellow-300">Kontak</Link>
