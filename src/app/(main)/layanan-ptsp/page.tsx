@@ -562,6 +562,12 @@ export default function LayananPTSP() {
                       <label className="block text-sm font-semibold text-slate-700 mb-1">Keperluan</label>
                       <textarea required value={formData.purpose} onChange={e => setFormData({...formData, purpose: e.target.value})} rows={2} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50" placeholder="Jelaskan keperluan..."></textarea>
                     </div>
+                      <div className="mb-6 flex justify-center w-full">
+                        <ReCAPTCHA
+                          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                          onChange={setCaptchaToken}
+                        />
+                      </div>
                     <button type="submit" disabled={isSubmitting} className="w-full py-4 mt-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all flex justify-center items-center gap-2 transform active:scale-95">
                       {isSubmitting ? "Mengirim..." : <><Send className="w-5 h-5" /> Kirim Permohonan</>}
                     </button>
@@ -590,6 +596,12 @@ export default function LayananPTSP() {
                   Cari
                 </button>
               </form>
+              <div className="mt-4 flex justify-start">
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                  onChange={setCaptchaToken}
+                />
+              </div>
             </div>
 
             {trackResult && (
@@ -718,4 +730,6 @@ export default function LayananPTSP() {
     </div>
   );
 }
+
+
 
