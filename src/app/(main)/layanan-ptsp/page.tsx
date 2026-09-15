@@ -97,6 +97,7 @@ export default function LayananPTSP() {
   const [trackId, setTrackId] = useState("");
   const [trackResult, setTrackResult] = useState<any>(null);
   const [isTracking, setIsTracking] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   useEffect(() => {
     setTime(new Date());
@@ -717,3 +718,4 @@ export default function LayananPTSP() {
     </div>
   );
 }
+
