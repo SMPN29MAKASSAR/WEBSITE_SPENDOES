@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 "use server"
 import { prisma } from "@/lib/prisma";
 

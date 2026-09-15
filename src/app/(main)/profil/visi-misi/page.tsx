@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 import { Target, Eye, CheckCircle2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 

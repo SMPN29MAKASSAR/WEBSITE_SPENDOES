@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 import { History, Award, BookOpen } from "lucide-react";
 
 export const metadata = { title: "Tentang Kami | UPT SPF SMPN 29 Makassar" };

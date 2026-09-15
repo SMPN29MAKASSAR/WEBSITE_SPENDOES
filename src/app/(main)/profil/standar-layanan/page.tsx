@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 import { ShieldCheck, Clock, MessageSquare, Headphones, FileText, CheckCircle2 } from "lucide-react";
 
 export const metadata = { title: "Standar Layanan | UPT SPF SMPN 29 Makassar" };

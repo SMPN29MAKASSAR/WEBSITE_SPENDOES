@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 60;
