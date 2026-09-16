@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { prisma } from "@/lib/prisma";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export default async function FasilitasPage() {
   const fasilitas = await prisma.fasilitas.findMany({ orderBy: { createdAt: "desc" } });
@@ -33,3 +33,4 @@ export default async function FasilitasPage() {
     </div>
   );
 }
+

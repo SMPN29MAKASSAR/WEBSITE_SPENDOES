@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { CalendarDays, BookOpen, PartyPopper, CalendarClock } from "lucide-react";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export default async function KalenderPage() {
   const agendas = await prisma.agenda.findMany({ 
@@ -111,3 +111,4 @@ export default async function KalenderPage() {
     </div>
   );
 }
+

@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { Trophy } from "lucide-react";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export default async function PrestasiPage() {
   const prestasiList = await prisma.prestasi.findMany({ orderBy: { tahun: "desc" } });
@@ -47,3 +47,4 @@ export default async function PrestasiPage() {
     </div>
   );
 }
+
