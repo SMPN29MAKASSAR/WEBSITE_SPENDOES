@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { Newspaper, Calendar } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // 1 jam - cukup untuk halaman beranda
 
 async function ProgramKamiList() {
   const programs = await prisma.program.findMany({ orderBy: { createdAt: "asc" } });
@@ -357,3 +357,4 @@ export default async function Home() {
     </div>
   );
 }
+

@@ -3,6 +3,7 @@
 import { Target, Eye, CheckCircle2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
+export const revalidate = 86400; // 24 hours - data rarely changes
 export const metadata = { title: "Visi & Misi | UPT SPF SMPN 29 Makassar" };
 
 export default async function VisiMisiPage() {

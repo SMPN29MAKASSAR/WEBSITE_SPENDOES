@@ -9,7 +9,7 @@ export const metadata = {
   description: "Bagan Struktur Organisasi SMPN 29 Makassar",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24 hours - data rarely changes
 
 export default async function StrukturOrganisasiPage() {
   const setting = await prisma.setting.findUnique({
@@ -72,3 +72,4 @@ export default async function StrukturOrganisasiPage() {
     </div>
   );
 }
+

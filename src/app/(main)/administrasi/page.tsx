@@ -7,7 +7,7 @@ export const metadata = {
   title: "Administrasi & Dokumen | SMPN 29 Makassar",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24 hours - data rarely changes
 
 export default async function AdministrasiPage() {
   const data = await prisma.administrasi.findMany({
@@ -16,3 +16,4 @@ export default async function AdministrasiPage() {
 
   return <AdministrasiClient initialData={data} />;
 }
+

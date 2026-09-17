@@ -21,7 +21,7 @@ export const metadata = {
   description: "Hubungi UPT SPF SMPN 29 Makassar. Informasi alamat, telepon, email resmi, WhatsApp, jam operasional, dan lokasi peta Google Maps.",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24 hours - data rarely changes
 
 export default async function KontakPage() {
   // Ambil pengaturan dinamis dari database (jika sudah diset di admin)
@@ -423,4 +423,5 @@ export default async function KontakPage() {
     </div>
   );
 }
+
 

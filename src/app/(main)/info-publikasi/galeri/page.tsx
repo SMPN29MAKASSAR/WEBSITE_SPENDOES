@@ -8,7 +8,7 @@ export const metadata = {
   description: "Galeri foto kegiatan dan fasilitas sekolah",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24 hours - data rarely changes
 
 export default async function GaleriPage() {
   const galeriList = await prisma.galeri.findMany({
@@ -56,3 +56,4 @@ export default async function GaleriPage() {
     </div>
   );
 }
+

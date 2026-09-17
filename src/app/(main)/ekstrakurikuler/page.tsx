@@ -5,7 +5,7 @@ import EkstrakurikulerClient from "./EkstrakurikulerClient";
 
 export const metadata = { title: "Ekstrakurikuler | UPT SPF SMPN 29 Makassar" };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24 hours - data rarely changes
 
 export default async function EkstrakurikulerPage() {
   const ekstrakurikuler = await prisma.ekstrakurikuler.findMany({ 
@@ -28,3 +28,4 @@ export default async function EkstrakurikulerPage() {
     </div>
   );
 }
+

@@ -8,7 +8,7 @@ export const metadata = {
   description: "Daftar guru dan pegawai SMPN 29 Makassar",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24 hours - data rarely changes
 
 export default async function GuruPage() {
   const pegawaiList = await prisma.pegawai.findMany({
@@ -21,3 +21,4 @@ export default async function GuruPage() {
     </div>
   );
 }
+

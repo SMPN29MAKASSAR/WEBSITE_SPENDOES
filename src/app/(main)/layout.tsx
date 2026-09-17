@@ -3,6 +3,9 @@
 import NavigationClient from "@/components/NavigationClient";
 import { prisma } from "@/lib/prisma";
 
+// Cache logo 24 jam - logo hampir tidak pernah berubah
+export const revalidate = 86400;
+
 export default async function MainLayout({
   children,
 }: {

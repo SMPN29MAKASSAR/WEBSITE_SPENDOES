@@ -12,7 +12,7 @@ export const metadata = {
   description: "Ikuti berita terkini dan informasi penting dari SMPN 29 Makassar",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // 1 jam
 
 interface BeritaPageProps {
   searchParams?: Promise<{
@@ -334,6 +334,7 @@ export default async function BeritaPage(props: BeritaPageProps) {
     </div>
   );
 }
+
 
 
 

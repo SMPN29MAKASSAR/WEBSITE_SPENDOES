@@ -8,7 +8,7 @@ export const metadata = {
   title: "Portal Layanan | UPT SPF SMPN 29 Makassar",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24 jam - portal links jarang berubah
 
 export default async function PortalPage() {
   const settings = await prisma.setting.findMany();
@@ -80,3 +80,4 @@ export default async function PortalPage() {
     </div>
   );
 }
+
