@@ -23,14 +23,13 @@ export default async function AsesmenPage() {
   const kelas9 = data.filter(d => d.kelas === "9");
 
   const KelasCard = ({ title, data, color, bgClass, headerText }: { title: string, data: any[], color: string, bgClass: string, headerText: string }) => (
-    <div className={
-ounded-3xl border-2 \ overflow-hidden bg-white shadow-xl flex flex-col h-full}>
-      <div className={\ py-6 px-4 text-center border-b-2 \}>
+    <div className={`rounded-3xl border-2 ${bgClass.replace('bg-', 'border-')} overflow-hidden bg-white shadow-xl flex flex-col h-full`}>
+      <div className={`${bgClass} py-6 px-4 text-center border-b-2 ${bgClass.replace('bg-', 'border-')}`}>
         <div className="flex justify-center mb-2">
-          <LucideIcons.GraduationCap className={w-10 h-10 \} />
+          <LucideIcons.GraduationCap className={`w-10 h-10 ${headerText}`} />
         </div>
-        <h2 className={	ext-2xl font-bold \}>Kelas {title}</h2>
-        <p className={	ext-sm mt-1 \ opacity-80}>Pilih mata pelajaran di bawah ini</p>
+        <h2 className={`text-2xl font-bold ${headerText}`}>Kelas {title}</h2>
+        <p className={`text-sm mt-1 ${headerText} opacity-80`}>Pilih mata pelajaran di bawah ini</p>
       </div>
       <div className="p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow bg-slate-50">
         {data.length === 0 ? (
@@ -47,7 +46,7 @@ ounded-3xl border-2 \ overflow-hidden bg-white shadow-xl flex flex-col h-full}>
                 className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-300 transition-all group"
               >
                 <div className="flex items-center gap-3">
-                  <div className={p-2 rounded-lg text-white \}>
+                  <div className={`p-2 rounded-lg text-white ${color}`}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <span className="font-semibold text-gray-700 text-sm group-hover:text-black transition-colors">{item.mataPelajaran}</span>

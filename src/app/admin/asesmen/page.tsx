@@ -21,7 +21,7 @@ export default function AdminAsesmen() {
 
   const availableIcons = [
     "Book", "BookOpen", "Calculator", "FlaskConical", "Globe", "PencilRuler",
-    "Monitor", "Music", "Palette", "Dumbbell", "Languages", "FileText", "Library", "PenTool"
+    "Monitor", "Music", "Palette", "Dumbbell", "Languages", "FileText", "Library", "PenTool", "CheckSquare", "ClipboardList"
   ];
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function AdminAsesmen() {
     e.preventDefault();
     setFormLoading(true);
     try {
-      const url = editingId ? \/api/asesmen/\\ : "/api/asesmen";
+      const url = editingId ? `/api/asesmen/${editingId}` : "/api/asesmen";
       const method = editingId ? "PUT" : "POST";
       
       const res = await fetch(url, {
@@ -72,7 +72,7 @@ export default function AdminAsesmen() {
   const handleDelete = async (id: string) => {
     if (!confirm("Yakin ingin menghapus mata pelajaran ini?")) return;
     try {
-      const res = await fetch(\/api/asesmen/\\, { method: "DELETE" });
+      const res = await fetch(`/api/asesmen/${id}`, { method: "DELETE" });
       if (res.ok) {
         toast.success("Berhasil dihapus");
         fetchData();
