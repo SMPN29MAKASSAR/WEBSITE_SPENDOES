@@ -28,7 +28,9 @@ export async function POST(request: Request) {
         kelas: String(json.kelas),
         linkUjian: json.linkUjian,
         icon: json.icon || 'Book',
-        order: parseInt(json.order) || 0
+        order: parseInt(json.order) || 0,
+        waktuMulai: json.waktuMulai ? new Date(json.waktuMulai) : null,
+        waktuBerakhir: json.waktuBerakhir ? new Date(json.waktuBerakhir) : null
       }
     });
     revalidatePath('/asesmen');

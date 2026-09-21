@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import * as LucideIcons from "lucide-react";
 import Link from "next/link";
+import AsesmenBtn from "./AsesmenBtn";
 
 export const metadata = {
   title: "Portal Asesmen Sumatif | SMPN 29 Makassar",
@@ -47,31 +48,16 @@ export default async function AsesmenPage() {
             <p className="text-sm font-medium text-slate-500">Belum ada jadwal asesmen</p>
           </div>
         ) : (
-          data.map((item) => {
-            const Icon = (LucideIcons as any)[item.icon] || LucideIcons.Book;
-            return (
-              <a 
-                key={item.id} 
-                href={item.linkUjian} 
-                target="_blank" 
-                rel="noreferrer"
-                className="group/btn relative flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-300 active:scale-[0.98] overflow-hidden"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-r ${gradientFrom} ${gradientTo} opacity-0 group-hover/btn:opacity-10 transition-opacity duration-300`}></div>
-                
-                <div className="flex items-center gap-4 relative z-10">
-                  <div className={`p-2.5 rounded-xl text-white ${iconColor.replace('text-', 'bg-').replace('-600', '-500')} shadow-inner`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className="font-bold text-slate-700 group-hover/btn:text-slate-900 transition-colors">{item.mataPelajaran}</span>
-                </div>
-                
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-slate-50 group-hover/btn:bg-white transition-colors relative z-10 ${textColor}`}>
-                  <LucideIcons.ArrowRight className="w-4 h-4 opacity-50 group-hover/btn:opacity-100 group-hover/btn:translate-x-0.5 transition-all" />
-                </div>
-              </a>
-            );
-          })
+          data.map((item) => (
+            <AsesmenBtn 
+              key={item.id} 
+              item={item} 
+              gradientFrom={gradientFrom} 
+              gradientTo={gradientTo} 
+              iconColor={iconColor} 
+              textColor={textColor} 
+            />
+          ))
         )}
       </div>
     </div>
@@ -81,20 +67,16 @@ export default async function AsesmenPage() {
     <div className="min-h-screen bg-[#F8FAFC] font-jakarta selection:bg-blue-200">
       {/* MODERN HERO SECTION */}
       <div className="relative pt-24 pb-32 lg:pt-32 lg:pb-40 overflow-hidden bg-slate-900 rounded-b-[3rem] shadow-2xl">
-        {/* Animated Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[50%] rounded-full bg-blue-600/20 blur-[100px] animate-pulse"></div>
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-cyan-500/20 blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
           <div className="absolute top-[20%] right-[20%] w-[20%] h-[30%] rounded-full bg-emerald-500/20 blur-[80px] animate-pulse" style={{ animationDelay: '4s' }}></div>
-          {/* Subtle Grid Pattern */}
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            
-            {/* Top Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-md mb-8 hover:bg-white/15 transition-colors">
               <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -103,7 +85,6 @@ export default async function AsesmenPage() {
               <span className="text-xs font-bold tracking-widest text-cyan-50 uppercase">Portal Ujian Sekolah</span>
             </div>
 
-            {/* Main Heading */}
             <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight">
               Asesmen <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Sumatif</span>
             </h1>
@@ -112,7 +93,6 @@ export default async function AsesmenPage() {
               Akses cepat menuju link ujian kelas 7, 8, dan 9. Kerjakan dengan teliti, jujur, dan penuh tanggung jawab.
             </p>
 
-            {/* Value Badges */}
             <div className="flex flex-wrap justify-center gap-4">
               <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors">
                 <div className="bg-emerald-500/20 p-2 rounded-xl text-emerald-400"><LucideIcons.CheckCircle2 className="w-5 h-5"/></div>

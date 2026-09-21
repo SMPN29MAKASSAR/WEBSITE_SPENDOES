@@ -4,20 +4,23 @@
 import { useState, useEffect } from "react";
 import * as LucideIcons from "lucide-react";
 
-
 export default function AdminAsesmen() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
+  const emptyForm = {
     mataPelajaran: "",
     kelas: "7",
     linkUjian: "",
     icon: "Book",
     order: "0",
-  });
+    waktuMulai: "",
+    waktuBerakhir: ""
+  };
+
+  const [formData, setFormData] = useState(emptyForm);
 
   const availableIcons = [
     "Book", "BookOpen", "Calculator", "FlaskConical", "Globe", "PencilRuler",
@@ -48,17 +51,23 @@ export default function AdminAsesmen() {
       const url = editingId ? `/api/asesmen/${editingId}` : "/api/asesmen";
       const method = editingId ? "PUT" : "POST";
       
+      const payload = {
+        ...formData,
+        waktuMulai: formData.waktuMulai ? `${formData.waktuMulai}:00+08:00` : null,
+        waktuBerakhir: formData.waktuBerakhir ? `${formData.waktuBerakhir}:00+08:00` : null
+      };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
         alert(editingId ? "Berhasil diperbarui" : "Berhasil ditambahkan");
         fetchData();
         setEditingId(null);
-        setFormData({ mataPelajaran: "", kelas: "7", linkUjian: "", icon: "Book", order: "0" });
+        setFormData(emptyForm);
       } else {
         alert("Terjadi kesalahan");
       }
@@ -82,6 +91,13 @@ export default function AdminAsesmen() {
     }
   };
 
+  const toWitaLocalString = (isoString: string) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    const witaTime = date.getTime() + (8 * 60 * 60 * 1000);
+    return new Date(witaTime).toISOString().slice(0, 16);
+  };
+
   const handleEdit = (item: any) => {
     setEditingId(item.id);
     setFormData({
@@ -90,12 +106,14 @@ export default function AdminAsesmen() {
       linkUjian: item.linkUjian,
       icon: item.icon,
       order: item.order.toString(),
+      waktuMulai: item.waktuMulai ? toWitaLocalString(item.waktuMulai) : "",
+      waktuBerakhir: item.waktuBerakhir ? toWitaLocalString(item.waktuBerakhir) : "",
     });
   };
 
   const cancelEdit = () => {
     setEditingId(null);
-    setFormData({ mataPelajaran: "", kelas: "7", linkUjian: "", icon: "Book", order: "0" });
+    setFormData(emptyForm);
   };
 
   return (
@@ -130,6 +148,18 @@ export default function AdminAsesmen() {
                 <input required type="url" value={formData.linkUjian} onChange={e => setFormData({...formData, linkUjian: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" placeholder="https://forms.gle/..." />
               </div>
 
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Waktu Buka (WITA)</label>
+                  <input type="datetime-local" value={formData.waktuMulai} onChange={e => setFormData({...formData, waktuMulai: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Waktu Tutup (WITA)</label>
+                  <input type="datetime-local" value={formData.waktuBerakhir} onChange={e => setFormData({...formData, waktuBerakhir: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs" />
+                </div>
+                <div className="col-span-2 text-[10px] text-gray-500 leading-tight">Biarkan kosong jika link selalu terbuka. Format waktu menggunakan zona WITA (Makassar).</div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Ikon</label>
                 <select value={formData.icon} onChange={e => setFormData({...formData, icon: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
@@ -137,13 +167,6 @@ export default function AdminAsesmen() {
                     <option key={icon} value={icon}>{icon}</option>
                   ))}
                 </select>
-                <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
-                  Preview Ikon: 
-                  {(() => {
-                    const Icon = (LucideIcons as any)[formData.icon] || LucideIcons.Book;
-                    return <Icon className="w-5 h-5 text-emerald-600" />;
-                  })()}
-                </div>
               </div>
 
               <div>
@@ -179,21 +202,28 @@ export default function AdminAsesmen() {
                   {kelasData.map((item) => {
                     const Icon = (LucideIcons as any)[item.icon] || LucideIcons.Book;
                     return (
-                      <div key={item.id} className="flex items-center justify-between p-3 border rounded-xl hover:border-emerald-300 transition-colors bg-gray-50">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600">
-                            <Icon className="w-5 h-5" />
+                      <div key={item.id} className="flex flex-col p-3 border rounded-xl hover:border-emerald-300 transition-colors bg-gray-50">
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600">
+                              <Icon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <div className="font-semibold text-gray-800">{item.mataPelajaran}</div>
+                              <a href={item.linkUjian} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline line-clamp-1">{item.linkUjian}</a>
+                            </div>
                           </div>
-                          <div>
-                            <div className="font-semibold text-gray-800">{item.mataPelajaran}</div>
-                            <a href={item.linkUjian} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline line-clamp-1">{item.linkUjian}</a>
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => handleEdit(item)} className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"><LucideIcons.Edit className="w-4 h-4" /></button>
+                            <button onClick={() => handleDelete(item.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><LucideIcons.Trash2 className="w-4 h-4" /></button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-md">Urutan: {item.order}</span>
-                          <button onClick={() => handleEdit(item)} className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"><LucideIcons.Edit className="w-4 h-4" /></button>
-                          <button onClick={() => handleDelete(item.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><LucideIcons.Trash2 className="w-4 h-4" /></button>
-                        </div>
+                        {(item.waktuMulai || item.waktuBerakhir) && (
+                          <div className="mt-2 text-[11px] text-gray-500 bg-gray-200 px-3 py-1.5 rounded-lg flex gap-4">
+                            <span>Mulai: {item.waktuMulai ? new Date(item.waktuMulai).toLocaleString('id-ID', {timeZone: 'Asia/Makassar'}) : 'Tidak dibatasi'}</span>
+                            <span>Akhir: {item.waktuBerakhir ? new Date(item.waktuBerakhir).toLocaleString('id-ID', {timeZone: 'Asia/Makassar'}) : 'Tidak dibatasi'}</span>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -212,4 +242,3 @@ export default function AdminAsesmen() {
     </div>
   );
 }
-

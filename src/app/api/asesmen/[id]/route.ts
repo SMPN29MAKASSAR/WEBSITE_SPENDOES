@@ -15,7 +15,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         kelas: String(json.kelas),
         linkUjian: json.linkUjian,
         icon: json.icon,
-        order: parseInt(json.order) || 0
+        order: parseInt(json.order) || 0,
+        waktuMulai: json.waktuMulai ? new Date(json.waktuMulai) : null,
+        waktuBerakhir: json.waktuBerakhir ? new Date(json.waktuBerakhir) : null
       }
     });
     revalidatePath('/asesmen');

@@ -242,6 +242,9 @@ model Asesmen {
   linkUjian String
   icon      String   @default("Book")
   order     Int      @default(0)
+  waktuMulai    DateTime?
+  waktuBerakhir DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
