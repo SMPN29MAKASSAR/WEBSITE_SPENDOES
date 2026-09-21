@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import * as LucideIcons from "lucide-react";
-import { toast } from "react-hot-toast";
+
 
 export default function AdminAsesmen() {
   const [data, setData] = useState<any[]>([]);
@@ -35,7 +35,7 @@ export default function AdminAsesmen() {
       const json = await res.json();
       if (Array.isArray(json)) setData(json);
     } catch (error) {
-      toast.error("Gagal mengambil data asesmen");
+      alert("Gagal mengambil data asesmen");
     } finally {
       setLoading(false);
     }
@@ -55,15 +55,15 @@ export default function AdminAsesmen() {
       });
 
       if (res.ok) {
-        toast.success(editingId ? "Berhasil diperbarui" : "Berhasil ditambahkan");
+        alert(editingId ? "Berhasil diperbarui" : "Berhasil ditambahkan");
         fetchData();
         setEditingId(null);
         setFormData({ mataPelajaran: "", kelas: "7", linkUjian: "", icon: "Book", order: "0" });
       } else {
-        toast.error("Terjadi kesalahan");
+        alert("Terjadi kesalahan");
       }
     } catch (error) {
-      toast.error("Gagal menyimpan data");
+      alert("Gagal menyimpan data");
     } finally {
       setFormLoading(false);
     }
@@ -74,11 +74,11 @@ export default function AdminAsesmen() {
     try {
       const res = await fetch(`/api/asesmen/${id}`, { method: "DELETE" });
       if (res.ok) {
-        toast.success("Berhasil dihapus");
+        alert("Berhasil dihapus");
         fetchData();
       }
     } catch (error) {
-      toast.error("Gagal menghapus");
+      alert("Gagal menghapus");
     }
   };
 
@@ -212,3 +212,4 @@ export default function AdminAsesmen() {
     </div>
   );
 }
+
