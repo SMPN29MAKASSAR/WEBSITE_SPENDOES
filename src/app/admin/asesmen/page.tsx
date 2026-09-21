@@ -16,8 +16,9 @@ export default function AdminAsesmen() {
     linkUjian: "",
     icon: "Book",
     order: "0",
-    waktuMulai: "",
-    waktuBerakhir: ""
+    tanggal: "",
+    jamMulai: "",
+    jamSelesai: ""
   };
 
   const [formData, setFormData] = useState(emptyForm);
@@ -51,10 +52,13 @@ export default function AdminAsesmen() {
       const url = editingId ? `/api/asesmen/${editingId}` : "/api/asesmen";
       const method = editingId ? "PUT" : "POST";
       
+      const wMulai = (formData.tanggal && formData.jamMulai) ? `${formData.tanggal}T${formData.jamMulai}:00+08:00` : null;
+      const wAkhir = (formData.tanggal && formData.jamSelesai) ? `${formData.tanggal}T${formData.jamSelesai}:00+08:00` : null;
+
       const payload = {
         ...formData,
-        waktuMulai: formData.waktuMulai ? `${formData.waktuMulai}:00+08:00` : null,
-        waktuBerakhir: formData.waktuBerakhir ? `${formData.waktuBerakhir}:00+08:00` : null
+        waktuMulai: wMulai,
+        waktuBerakhir: wAkhir
       };
 
       const res = await fetch(url, {
@@ -100,14 +104,34 @@ export default function AdminAsesmen() {
 
   const handleEdit = (item: any) => {
     setEditingId(item.id);
+    
+    const wMulaiStr = item.waktuMulai ? toWitaLocalString(item.waktuMulai) : "";
+    const wAkhirStr = item.waktuBerakhir ? toWitaLocalString(item.waktuBerakhir) : "";
+    
+    let tgl = "";
+    let jMulai = "";
+    let jSelesai = "";
+
+    if (wMulaiStr) {
+      const parts = wMulaiStr.split("T");
+      tgl = parts[0];
+      jMulai = parts[1];
+    }
+    if (wAkhirStr) {
+      const parts = wAkhirStr.split("T");
+      if (!tgl) tgl = parts[0];
+      jSelesai = parts[1];
+    }
+
     setFormData({
       mataPelajaran: item.mataPelajaran,
       kelas: item.kelas,
       linkUjian: item.linkUjian,
       icon: item.icon,
       order: item.order.toString(),
-      waktuMulai: item.waktuMulai ? toWitaLocalString(item.waktuMulai) : "",
-      waktuBerakhir: item.waktuBerakhir ? toWitaLocalString(item.waktuBerakhir) : "",
+      tanggal: tgl,
+      jamMulai: jMulai,
+      jamSelesai: jSelesai
     });
   };
 
@@ -148,16 +172,23 @@ export default function AdminAsesmen() {
                 <input required type="url" value={formData.linkUjian} onChange={e => setFormData({...formData, linkUjian: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" placeholder="https://forms.gle/..." />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="border border-slate-200 p-4 rounded-xl bg-slate-50 space-y-3">
+                <div className="font-semibold text-slate-700 text-sm border-b pb-2">Jadwal Ujian (Opsional)</div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Waktu Buka (WITA)</label>
-                  <input type="datetime-local" value={formData.waktuMulai} onChange={e => setFormData({...formData, waktuMulai: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs" />
+                  <label className="block text-xs font-bold text-gray-600 mb-1">Tanggal</label>
+                  <input type="date" value={formData.tanggal} onChange={e => setFormData({...formData, tanggal: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Waktu Tutup (WITA)</label>
-                  <input type="datetime-local" value={formData.waktuBerakhir} onChange={e => setFormData({...formData, waktuBerakhir: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">Jam Mulai (WITA)</label>
+                    <input type="time" value={formData.jamMulai} onChange={e => setFormData({...formData, jamMulai: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">Jam Berakhir (WITA)</label>
+                    <input type="time" value={formData.jamSelesai} onChange={e => setFormData({...formData, jamSelesai: e.target.value})} className="w-full border rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm" />
+                  </div>
                 </div>
-                <div className="col-span-2 text-[10px] text-gray-500 leading-tight">Biarkan kosong jika link selalu terbuka. Format waktu menggunakan zona WITA (Makassar).</div>
+                <div className="text-[10px] text-gray-500 leading-tight">Biarkan kosong jika link selalu terbuka (tidak ada batas waktu).</div>
               </div>
 
               <div>
