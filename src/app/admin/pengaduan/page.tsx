@@ -2,38 +2,77 @@
 // @ts-nocheck
 "use client";
 import { useEffect, useState } from "react";
-import { X, Loader2, MessageSquare, CheckCircle, Clock, Paperclip } from "lucide-react";
+import { X, Loader2, MessageSquare, CheckCircle, Clock, Paperclip, Trash2, Edit } from "lucide-react";
 
 export default function AdminPengaduanPage() {
   const [pengaduans, setPengaduans] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
-  const [status, setStatus] = useState("");
-  const [tanggapan, setTanggapan] = useState("");
+  const [formData, setFormData] = useState<any>({});
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    fetch("/api/pengaduan")
-      .then((res) => res.json())
-      .then((data) => setPengaduans(data));
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/pengaduan");
+      const data = await res.json();
+      setPengaduans(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selected) return;
     setIsUpdating(true);
     
-    const res = await fetch(`/api/pengaduan/${selected.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status, tanggapan }),
-    });
-    
-    if (res.ok) {
-      const updated = await res.json();
-      setPengaduans(pengaduans.map((p) => (p.id === updated.id ? updated : p)));
-      setSelected(null);
+    try {
+      const res = await fetch(`/api/pengaduan/${selected.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      
+      if (res.ok) {
+        alert("Data berhasil diperbarui!");
+        setSelected(null);
+        fetchData();
+      } else {
+        alert("Gagal memperbarui data.");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan.");
+    } finally {
+      setIsUpdating(false);
     }
-    setIsUpdating(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus aduan ini?")) return;
+    try {
+      const res = await fetch(`/api/pengaduan/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        alert("Aduan berhasil dihapus!");
+        fetchData();
+      }
+    } catch (error) {
+      alert("Gagal menghapus aduan.");
+    }
+  };
+
+  const openModal = (p: any) => {
+    setSelected(p);
+    setFormData({
+      nama: p.nama,
+      email: p.email || "",
+      kategori: p.kategori,
+      isiAduan: p.isiAduan,
+      status: p.status || "MENUNGGU",
+      tanggapan: p.tanggapan || ""
+    });
   };
 
   const getStatusBadge = (s: string) => {
@@ -79,13 +118,15 @@ export default function AdminPengaduanPage() {
                 <td className="px-4 py-3 text-sm text-slate-500">
                   {new Date(p.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </td>
-                <td className="px-4 py-3 text-right">
-                  <button
-                    onClick={() => { setSelected(p); setStatus(p.status || "MENUNGGU"); setTanggapan(p.tanggapan || ""); }}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
-                  >
-                    <MessageSquare className="w-4 h-4" /> Buka
-                  </button>
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-end gap-2">
+                    <button onClick={() => openModal(p)} className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                      <Edit className="w-4 h-4" /> Edit / Buka
+                    </button>
+                    <button onClick={() => handleDelete(p.id)} className="p-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -103,63 +144,66 @@ export default function AdminPengaduanPage() {
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white w-full max-w-2xl rounded-xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+            <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4 shrink-0">
               <div>
-                <h3 className="text-xl font-bold text-slate-800">Detail Aduan #{selected.tiketId}</h3>
-                <p className="text-sm text-slate-500">Dari: {selected.nama} ({selected.email || 'Tidak ada email'})</p>
+                <h3 className="text-xl font-bold text-slate-800">Detail & Edit Aduan #{selected.tiketId}</h3>
+                <p className="text-sm text-slate-500">Dibuat pada {new Date(selected.createdAt).toLocaleString('id-ID')}</p>
               </div>
               <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-full">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Isi Laporan ({selected.kategori})</h4>
-              <p className="text-slate-700 whitespace-pre-wrap">{selected.isiAduan}</p>
-            </div>
-
-            {selected.lampiran && (
-              <div className="mb-6">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Lampiran</h4>
-                <a href={selected.lampiran} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition">
-                  <Paperclip className="w-4 h-4" /> Lihat Lampiran
-                </a>
-                {selected.lampiran.match(/\.(jpeg|jpg|gif|png)$/i) && (
-                  <div className="mt-3">
-                     <img src={selected.lampiran} alt="Lampiran" className="max-w-xs rounded-lg border border-slate-200 shadow-sm" />
-                  </div>
-                )}
-              </div>
-            )}
-
             <form onSubmit={handleUpdate} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-xs font-semibold text-slate-700">Nama Pelapor</label>
+                  <input type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                </div>
+                <div>
+                  <label className="block mb-1 text-xs font-semibold text-slate-700">Email Pelapor</label>
+                  <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                </div>
+              </div>
+
               <div>
-                <label className="block mb-2 text-sm font-medium text-slate-700">Perbarui Status</label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
+                <label className="block mb-1 text-xs font-semibold text-slate-700">Kategori Aduan</label>
+                <input type="text" value={formData.kategori} onChange={e => setFormData({...formData, kategori: e.target.value})} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+
+              <div>
+                <label className="block mb-1 text-xs font-semibold text-slate-700">Isi Aduan</label>
+                <textarea value={formData.isiAduan} onChange={e => setFormData({...formData, isiAduan: e.target.value})} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" rows={3}></textarea>
+              </div>
+
+              {selected.lampiran && (
+                <div className="mb-4">
+                  <label className="block mb-1 text-xs font-semibold text-slate-700">Lampiran</label>
+                  <a href={selected.lampiran} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition">
+                    <Paperclip className="w-4 h-4" /> Lihat Lampiran
+                  </a>
+                </div>
+              )}
+
+              <div className="border-t border-slate-100 pt-4 mt-2">
+                <label className="block mb-1 text-sm font-semibold text-slate-700">Perbarui Status</label>
+                <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                   <option value="MENUNGGU">Menunggu</option>
                   <option value="DIPROSES">Diproses</option>
                   <option value="SELESAI">Selesai</option>
                   <option value="DITOLAK">Ditolak</option>
                 </select>
               </div>
+
               <div>
-                <label className="block mb-2 text-sm font-medium text-slate-700">Tanggapan Resmi</label>
-                <textarea
-                  value={tanggapan}
-                  onChange={(e) => setTanggapan(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  rows={4}
-                  placeholder="Ketik tanggapan untuk pelapor di sini..."
-                />
+                <label className="block mb-1 text-sm font-semibold text-slate-700">Tanggapan Resmi</label>
+                <textarea value={formData.tanggapan} onChange={(e) => setFormData({...formData, tanggapan: e.target.value})} className="w-full border border-slate-300 rounded-lg px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" rows={3} placeholder="Ketik tanggapan untuk pelapor di sini..." />
               </div>
+
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                 <button type="button" onClick={() => setSelected(null)} className="px-5 py-2.5 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Tutup</button>
                 <button type="submit" disabled={isUpdating} className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors">
-                  {isUpdating ? <><Loader2 className="w-4 h-4 animate-spin"/> Menyimpan...</> : "Simpan Tanggapan"}
+                  {isUpdating ? <><Loader2 className="w-4 h-4 animate-spin"/> Menyimpan...</> : "Simpan Perubahan"}
                 </button>
               </div>
             </form>

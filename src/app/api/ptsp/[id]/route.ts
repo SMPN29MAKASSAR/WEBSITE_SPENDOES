@@ -10,6 +10,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const ptsp = await prisma.ptspRequest.update({
       where: { id },
       data: {
+        name: json.name,
+        identityId: json.identityId,
+        serviceType: json.serviceType,
+        purpose: json.purpose,
+        contactWa: json.contactWa,
         status: json.status,
         response: json.response,
       }

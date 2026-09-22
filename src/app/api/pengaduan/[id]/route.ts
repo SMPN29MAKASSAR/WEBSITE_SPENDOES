@@ -10,11 +10,17 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { status, tanggapan } = body;
 
     const updated = await prisma.pengaduan.update({
       where: { id },
-      data: { status, tanggapan },
+      data: { 
+        nama: body.nama,
+        email: body.email,
+        kategori: body.kategori,
+        isiAduan: body.isiAduan,
+        status: body.status, 
+        tanggapan: body.tanggapan 
+      },
     });
     
     return NextResponse.json(updated);
@@ -35,5 +41,18 @@ export async function GET(
     return NextResponse.json(pengaduan);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch pengaduan" }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    await prisma.pengaduan.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete pengaduan" }, { status: 500 });
   }
 }
