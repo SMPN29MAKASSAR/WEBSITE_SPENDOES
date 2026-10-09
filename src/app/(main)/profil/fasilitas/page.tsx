@@ -1,7 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
 
 export const revalidate = 3600;
 
@@ -19,9 +18,7 @@ export default async function FasilitasPage() {
           {fasilitas.map(item => (
             <div key={item.id} className="break-inside-avoid bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               {item.imageUrl ? (
-                <div className="relative w-full h-64">
-                  <Image src={item.imageUrl} alt={item.nama} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
-                </div>
+                <img src={item.imageUrl} alt={item.nama} className="w-full h-48 md:h-64 object-cover" />
               ) : (
                 <div className="w-full h-48 bg-slate-100 flex items-center justify-center text-slate-400">Tidak ada gambar</div>
               )}
