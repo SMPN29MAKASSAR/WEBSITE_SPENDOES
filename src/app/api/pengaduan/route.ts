@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from "next/server";
+import { revalidatePath } from 'next/cache';
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
@@ -37,6 +38,7 @@ export async function POST(req: Request) {
       },
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, data: newPengaduan }, { status: 201 });
   } catch (error) {
     console.error("Error creating pengaduan:", error);

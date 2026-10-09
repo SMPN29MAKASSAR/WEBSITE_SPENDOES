@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from "next/server";
+import { revalidatePath } from 'next/cache';
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -39,6 +40,7 @@ export async function PUT(
       where: { id },
       data: updateData,
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(updated);
   } catch (error) {
     console.error(error);
@@ -55,6 +57,7 @@ export async function DELETE(
     await prisma.post.delete({
       where: { id },
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json({ message: "Post deleted" });
   } catch (error) {
     console.error(error);

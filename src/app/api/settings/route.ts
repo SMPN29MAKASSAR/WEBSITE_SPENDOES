@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from "next/server";
+import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
       }
     }
 
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);

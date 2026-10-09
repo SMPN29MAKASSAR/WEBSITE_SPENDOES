@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
         contact: json.contact,
       }
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(guest);
   } catch (error) {
     console.error(error);
@@ -43,6 +45,7 @@ export async function DELETE(request: Request) {
       await prisma.guestBook.deleteMany({
         where: { id: { in: json.ids } }
       });
+    revalidatePath('/', 'layout');
       return NextResponse.json({ success: true });
     }
     return NextResponse.json({ error: 'Invalid data' }, { status: 400 });

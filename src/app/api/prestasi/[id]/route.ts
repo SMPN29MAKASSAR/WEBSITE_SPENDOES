@@ -2,6 +2,7 @@
 // @ts-nocheck
 
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -20,6 +21,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       where: { id: (await params).id },
       data: { namaSiswa, namaLomba, tingkat, tahun: Number(tahun), deskripsi, imageUrl },
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(prestasi);
   } catch (error) { return NextResponse.json({ error: 'Failed to update prestasi' }, { status: 500 }); }
 }
@@ -27,6 +29,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await prisma.prestasi.delete({ where: { id: (await params).id } });
+    revalidatePath('/', 'layout');
     return NextResponse.json({ message: 'Deleted successfully' });
   } catch (error) { return NextResponse.json({ error: 'Failed to delete prestasi' }, { status: 500 }); }
 }

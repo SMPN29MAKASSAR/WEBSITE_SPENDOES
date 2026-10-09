@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
     const fasilitas = await prisma.fasilitas.create({
       data: { nama, deskripsi, imageUrl },
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(fasilitas, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create fasilitas' }, { status: 500 });

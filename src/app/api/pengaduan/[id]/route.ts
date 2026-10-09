@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from "next/server";
+import { revalidatePath } from 'next/cache';
 import { prisma } from "@/lib/prisma";
 
 export async function PUT(
@@ -23,6 +24,7 @@ export async function PUT(
       },
     });
     
+    revalidatePath('/', 'layout');
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: "Failed to update pengaduan" }, { status: 500 });
@@ -51,6 +53,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     await prisma.pengaduan.delete({ where: { id } });
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete pengaduan" }, { status: 500 });

@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
@@ -25,6 +26,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       data: dataToUpdate,
       select: { id: true, email: true, name: true, role: true }
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
@@ -43,6 +45,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     }
 
     await prisma.user.delete({ where: { id } });
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });

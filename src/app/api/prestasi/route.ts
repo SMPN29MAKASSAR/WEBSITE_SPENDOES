@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
       },
     });
     
+    revalidatePath('/', 'layout');
     return NextResponse.json(prestasi, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create prestasi' }, { status: 500 });

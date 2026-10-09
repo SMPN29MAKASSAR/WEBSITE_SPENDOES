@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
       select: { id: true, email: true, name: true, role: true }
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json(user);
   } catch (error) {
     console.error(error);

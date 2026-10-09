@@ -2,6 +2,7 @@
 // @ts-nocheck
 
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -19,6 +20,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       where: { id: (await params).id },
       data: { nama, deskripsi, imageUrl },
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(fasilitas);
   } catch (error) { return NextResponse.json({ error: 'Failed to update' }, { status: 500 }); }
 }
@@ -26,6 +28,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await prisma.fasilitas.delete({ where: { id: (await params).id } });
+    revalidatePath('/', 'layout');
     return NextResponse.json({ message: 'Deleted successfully' });
   } catch (error) { return NextResponse.json({ error: 'Failed to delete' }, { status: 500 }); }
 }

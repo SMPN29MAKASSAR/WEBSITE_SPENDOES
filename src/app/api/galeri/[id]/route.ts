@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export async function PUT(
@@ -19,6 +20,7 @@ export async function PUT(
         tanggal: json.tanggal || null,
       },
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
@@ -34,6 +36,7 @@ export async function DELETE(
     await prisma.galeri.delete({
       where: { id },
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });

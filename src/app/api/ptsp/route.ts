@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
         contactWa: json.contactWa,
       }
     });
+    revalidatePath('/', 'layout');
     return NextResponse.json(ptsp);
   } catch (error) {
     console.error(error);
