@@ -2,6 +2,7 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 export async function GET() {
   try {
@@ -26,9 +27,9 @@ export async function POST(request: Request) {
         fileUrl: json.fileUrl,
       },
     });
+    revalidatePath('/administrasi');
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create' }, { status: 500 });
   }
 }
-
