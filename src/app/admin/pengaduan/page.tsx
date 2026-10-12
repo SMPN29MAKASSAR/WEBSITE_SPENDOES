@@ -1,7 +1,8 @@
 /* eslint-disable */
 // @ts-nocheck
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
+import * as XLSX from "xlsx";
 import { 
   X, 
   Loader2, 
@@ -23,7 +24,11 @@ import {
   Tags,
   Plus,
   Check,
-  ArrowUpDown
+  FileSpreadsheet,
+  Upload,
+  Download,
+  AlertTriangle,
+  FileUp
 } from "lucide-react";
 
 export default function AdminPengaduanPage() {
@@ -55,6 +60,14 @@ export default function AdminPengaduanPage() {
   const [editingCatIndex, setEditingCatIndex] = useState<number | null>(null);
   const [editingCatText, setEditingCatText] = useState("");
   const [isSavingCategories, setIsSavingCategories] = useState(false);
+
+  // Import Excel Management
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importData, setImportData] = useState<any[]>([]);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importError, setImportError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchData();
@@ -164,6 +177,87 @@ export default function AdminPengaduanPage() {
       alert("Terjadi kesalahan saat menyimpan kategori.");
     } finally {
       setIsSavingCategories(false);
+    }
+  };
+
+  // Import Handlers
+  const handleDownloadTemplate = () => {
+    // Download directly from public folder or dynamic fallback
+    const link = document.createElement("a");
+    link.href = "/template_import_pengaduan.xlsx";
+    link.download = "template_import_pengaduan.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImportError("");
+    const file = e.target.files?.[0];
+    if (!file) {
+      setImportFile(null);
+      setImportData([]);
+      return;
+    }
+
+    setImportFile(file);
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: "array" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const parsed = XLSX.utils.sheet_to_json(ws);
+        
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          setImportError("File Excel kosong atau format tidak sesuai.");
+          setImportData([]);
+          return;
+        }
+
+        setImportData(parsed);
+      } catch (err: any) {
+        console.error("Error parsing excel:", err);
+        setImportError("Gagal membaca file Excel. Pastikan file valid.");
+        setImportData([]);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleExecuteImport = async () => {
+    if (!importData || importData.length === 0) {
+      alert("Pilih file Excel yang memiliki baris data terlebih dahulu.");
+      return;
+    }
+
+    setIsImporting(true);
+    setImportError("");
+
+    try {
+      const res = await fetch("/api/pengaduan/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: importData }),
+      });
+
+      const result = await res.json();
+      if (res.ok && result.success) {
+        alert(`Berhasil mengimpor ${result.count} data pengaduan!`);
+        setShowImportModal(false);
+        setImportFile(null);
+        setImportData([]);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        fetchData();
+      } else {
+        setImportError(result.error || "Gagal mengimpor data pengaduan.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      setImportError("Terjadi kesalahan saat mengirim data ke server.");
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -279,7 +373,6 @@ export default function AdminPengaduanPage() {
 
   const openModal = (p: any) => {
     setSelected(p);
-    // Format existing createdAt to YYYY-MM-DD for date input
     let dateStr = "";
     if (p.createdAt) {
       const d = new Date(p.createdAt);
@@ -341,14 +434,23 @@ export default function AdminPengaduanPage() {
             Kelola pengaduan, verifikasi tindak lanjut, dan pantau persentase penanganan aduan.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Tombol Kelola Kategori (FITUR REQUEST) */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Tombol Import Excel (FITUR REQUEST) */}
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2 text-xs font-bold shadow-sm shadow-blue-600/20 transition active:scale-95"
+          >
+            <FileSpreadsheet className="w-4 h-4" />
+            Import Pengaduan (.xlsx)
+          </button>
+
+          {/* Tombol Kelola Kategori */}
           <button
             onClick={openCategoryModal}
             className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 flex items-center gap-2 text-xs font-bold shadow-sm shadow-emerald-600/20 transition active:scale-95"
           >
             <Tags className="w-3.5 h-3.5" />
-            Kelola Kategori Pengaduan
+            Kelola Kategori
           </button>
 
           {/* Year selector */}
@@ -727,7 +829,6 @@ export default function AdminPengaduanPage() {
                   onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
                   className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
-                  {/* Tampilkan kategori saat ini jika tidak ada dalam daftar aktif */}
                   {formData.kategori && !categories.includes(formData.kategori) && (
                     <option value={formData.kategori}>{formData.kategori} (Lama)</option>
                   )}
@@ -829,7 +930,195 @@ export default function AdminPengaduanPage() {
         </div>
       )}
 
-      {/* MODAL KELOLA KATEGORI PENGADUAN (FITUR REQUEST: EDIT / HAPUS / TAMBAH KATEGORI) */}
+      {/* MODAL IMPORT EXCEL PENGADUAN (FITUR REQUEST) */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-white w-full max-w-2xl rounded-2xl p-6 lg:p-7 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-5 border-b border-slate-100 pb-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 mb-1.5">
+                  <FileSpreadsheet className="w-3.5 h-3.5" /> Import Data Massal
+                </div>
+                <h3 className="text-xl font-bold font-jakarta text-slate-800">
+                  Import Pengaduan Manual via Excel
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Unggah data pengaduan lama/manual menggunakan format template Excel yang telah disediakan.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportFile(null);
+                  setImportData([]);
+                  setImportError("");
+                }}
+                className="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-xl transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-5">
+              {/* Step 1: Download Template */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-blue-900 uppercase tracking-wider">
+                    Langkah 1: Unduh Format Template
+                  </p>
+                  <p className="text-xs text-blue-700/80">
+                    Gunakan template resmi agar kolom Tanggal, Nama, Kategori, dan Status terbaca presisi.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadTemplate}
+                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm shadow-blue-600/20 transition shrink-0 active:scale-95"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Template (.xlsx)
+                </button>
+              </div>
+
+              {/* Step 2: Upload File */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-2">
+                  Langkah 2: Pilih &amp; Unggah File Excel (.xlsx / .xls / .csv)
+                </label>
+                <div className="border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-2xl p-6 text-center bg-slate-50/50 hover:bg-blue-50/30 transition-all">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".xlsx, .xls, .csv"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="excel-file-input"
+                  />
+                  <label htmlFor="excel-file-input" className="cursor-pointer block">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-3 shadow-xs">
+                      <FileUp className="w-6 h-6" />
+                    </div>
+                    {importFile ? (
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-slate-800">{importFile.name}</p>
+                        <p className="text-xs text-emerald-600 font-semibold">
+                          {(importFile.size / 1024).toFixed(1)} KB — Siap diproses
+                        </p>
+                        <span className="text-[11px] text-blue-600 underline font-medium inline-block mt-2">
+                          Ganti file lain
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-slate-700">
+                          Klik untuk memilih file Excel dari komputer
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          Mendukung format .xlsx, .xls, dan .csv
+                        </p>
+                      </div>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              {/* Error Alert */}
+              {importError && (
+                <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
+                  <span>{importError}</span>
+                </div>
+              )}
+
+              {/* Step 3: Data Preview */}
+              {importData.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      Terdeteksi {importData.length} Baris Pengaduan
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Menampilkan pratinjau 3 baris pertama
+                    </span>
+                  </div>
+
+                  <div className="border border-slate-200 rounded-xl overflow-hidden bg-white text-xs">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
+                          <tr>
+                            <th className="p-2.5">TANGGAL</th>
+                            <th className="p-2.5">PELAPOR</th>
+                            <th className="p-2.5">KATEGORI</th>
+                            <th className="p-2.5">STATUS</th>
+                            <th className="p-2.5">RINGKASAN ISI</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {importData.slice(0, 3).map((row, idx) => (
+                            <tr key={idx} className="hover:bg-slate-50/50">
+                              <td className="p-2.5 font-medium text-slate-600 whitespace-nowrap">
+                                {String(row["Tanggal (YYYY-MM-DD)"] || row["Tanggal"] || "-").substring(0, 10)}
+                              </td>
+                              <td className="p-2.5 font-bold text-slate-800">
+                                {String(row["Nama Pelapor"] || row["Nama"] || "-")}
+                              </td>
+                              <td className="p-2.5 text-slate-600">
+                                {String(row["Kategori"] || "-")}
+                              </td>
+                              <td className="p-2.5 font-semibold text-emerald-700">
+                                {String(row["Status"] || "SELESAI")}
+                              </td>
+                              <td className="p-2.5 text-slate-500 max-w-xs truncate">
+                                {String(row["Isi Pengaduan"] || row["Isi Aduan"] || "-")}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end gap-3 pt-5 mt-6 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportFile(null);
+                  setImportData([]);
+                  setImportError("");
+                }}
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleExecuteImport}
+                disabled={isImporting || importData.length === 0}
+                className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-lg shadow-blue-600/25 disabled:opacity-50 active:scale-95"
+              >
+                {isImporting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Mengimpor Data...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" /> Mulai Impor ({importData.length} Data)
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL KELOLA KATEGORI PENGADUAN */}
       {showCategoryModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
           <div className="bg-white w-full max-w-xl rounded-2xl p-6 lg:p-7 shadow-2xl max-h-[92vh] overflow-y-auto">
