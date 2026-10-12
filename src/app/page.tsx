@@ -20,6 +20,7 @@ export default async function PortalPage() {
   const logoUrl = getSetting('school_logo', '');
   
   const portalLinks = await prisma.portalLink.findMany({
+    where: { isActive: true },
     orderBy: { order: 'asc' }
   });
 

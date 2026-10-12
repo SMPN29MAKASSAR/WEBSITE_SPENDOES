@@ -8,20 +8,24 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const json = await request.json();
+
+    const updateData: any = {};
+    if (json.title !== undefined) updateData.title = json.title;
+    if (json.description !== undefined) updateData.description = json.description;
+    if (json.url !== undefined) updateData.url = json.url;
+    if (json.icon !== undefined) updateData.icon = json.icon;
+    if (json.color !== undefined) updateData.color = json.color;
+    if (json.order !== undefined) updateData.order = parseInt(json.order) || 0;
+    if (json.isActive !== undefined) updateData.isActive = Boolean(json.isActive);
+
     const link = await prisma.portalLink.update({
       where: { id },
-      data: {
-        title: json.title,
-        description: json.description,
-        url: json.url,
-        icon: json.icon,
-        color: json.color,
-        order: parseInt(json.order) || 0
-      }
+      data: updateData
     });
-    revalidatePath('/');
+    revalidatePath('/', 'layout');
     return NextResponse.json(link);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
   }
 }
@@ -30,11 +34,9 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   try {
     const { id } = await params;
     await prisma.portalLink.delete({ where: { id } });
-    revalidatePath('/');
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });
   }
 }
-
-
