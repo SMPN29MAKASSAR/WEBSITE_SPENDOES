@@ -34,18 +34,38 @@ export default function BuatPengaduan() {
     "Waktu respons awal adalah 1x24 jam kerja oleh tim admin pengaduan sekolah."
   ]);
   
+  const [categories, setCategories] = useState<string[]>([
+    "Fasilitas & Sarana Prasarana",
+    "Pelayanan Administrasi & Guru",
+    "Pencegahan Perundungan (Bullying)",
+    "Kegiatan Pembelajaran / Akademik",
+    "Pelaksanaan Program BONSAI",
+    "Sarana & Prasarana Program BONSAI",
+    "Pengaduan Lainnya"
+  ]);
+
   useEffect(() => {
     fetch("/api/settings").then(r => r.json()).then(data => {
       if (data.pengaduan_tips) {
         setTips(data.pengaduan_tips.split("\n").filter((t: string) => t.trim().length > 0));
       }
     });
+
+    fetch("/api/pengaduan/kategori").then(r => r.json()).then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        setCategories(data);
+        setFormData(prev => ({
+          ...prev,
+          kategori: prev.kategori || data[0]
+        }));
+      }
+    }).catch(console.error);
   }, []);
   
   const [formData, setFormData] = useState({
     nama: "",
     email: "",
-    kategori: "Fasilitas",
+    kategori: "Fasilitas & Sarana Prasarana",
     isiAduan: "",
   });
   const [file, setFile] = useState<File | null>(null);
@@ -333,11 +353,11 @@ export default function BuatPengaduan() {
                           onChange={handleChange}
                           className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-300 text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium transition bg-white"
                         >
-                          <option value="Fasilitas">Fasilitas & Sarana Prasarana</option>
-                          <option value="Pelayanan">Pelayanan Administrasi & Guru</option>
-                          <option value="Bullying">Pencegahan Perundungan (Bullying)</option>
-                          <option value="Akademik">Kegiatan Pembelajaran / Akademik</option>
-                          <option value="Lainnya">Pengaduan Lainnya</option>
+                          {categories.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>

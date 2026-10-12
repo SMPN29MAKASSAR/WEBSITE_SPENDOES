@@ -19,7 +19,11 @@ import {
   Search, 
   RefreshCw,
   FileCheck2,
-  Info
+  Info,
+  Tags,
+  Plus,
+  Check,
+  ArrowUpDown
 } from "lucide-react";
 
 export default function AdminPengaduanPage() {
@@ -35,8 +39,26 @@ export default function AdminPengaduanPage() {
   const [selectedYear, setSelectedYear] = useState("SEMUA");
   const [showFormulaDetail, setShowFormulaDetail] = useState(true);
 
+  // Kategori Management
+  const [categories, setCategories] = useState<string[]>([
+    "Fasilitas & Sarana Prasarana",
+    "Pelayanan Administrasi & Guru",
+    "Pencegahan Perundungan (Bullying)",
+    "Kegiatan Pembelajaran / Akademik",
+    "Pelaksanaan Program BONSAI",
+    "Sarana & Prasarana Program BONSAI",
+    "Pengaduan Lainnya"
+  ]);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [tempCategories, setTempCategories] = useState<string[]>([]);
+  const [newCatInput, setNewCatInput] = useState("");
+  const [editingCatIndex, setEditingCatIndex] = useState<number | null>(null);
+  const [editingCatText, setEditingCatText] = useState("");
+  const [isSavingCategories, setIsSavingCategories] = useState(false);
+
   useEffect(() => {
     fetchData();
+    fetchCategories();
   }, []);
 
   const fetchData = async () => {
@@ -49,6 +71,99 @@ export default function AdminPengaduanPage() {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("/api/pengaduan/kategori");
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setCategories(data);
+      }
+    } catch (e) {
+      console.error("Gagal memuat kategori:", e);
+    }
+  };
+
+  const openCategoryModal = () => {
+    setTempCategories([...categories]);
+    setNewCatInput("");
+    setEditingCatIndex(null);
+    setShowCategoryModal(true);
+  };
+
+  const handleAddCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = newCatInput.trim();
+    if (!trimmed) return;
+    if (tempCategories.includes(trimmed)) {
+      alert("Kategori tersebut sudah ada!");
+      return;
+    }
+    setTempCategories([...tempCategories, trimmed]);
+    setNewCatInput("");
+  };
+
+  const handleDeleteCategory = (index: number) => {
+    if (tempCategories.length <= 1) {
+      alert("Minimal harus ada 1 kategori tersisa.");
+      return;
+    }
+    const catName = tempCategories[index];
+    if (confirm(`Yakin ingin menghapus kategori "${catName}"?`)) {
+      const updated = tempCategories.filter((_, i) => i !== index);
+      setTempCategories(updated);
+      if (editingCatIndex === index) {
+        setEditingCatIndex(null);
+      }
+    }
+  };
+
+  const handleStartEditCategory = (index: number) => {
+    setEditingCatIndex(index);
+    setEditingCatText(tempCategories[index]);
+  };
+
+  const handleSaveEditCategory = (index: number) => {
+    const trimmed = editingCatText.trim();
+    if (!trimmed) {
+      alert("Nama kategori tidak boleh kosong.");
+      return;
+    }
+    const updated = [...tempCategories];
+    updated[index] = trimmed;
+    setTempCategories(updated);
+    setEditingCatIndex(null);
+    setEditingCatText("");
+  };
+
+  const handleSaveAllCategories = async () => {
+    if (tempCategories.length === 0) {
+      alert("Minimal harus ada 1 kategori.");
+      return;
+    }
+
+    setIsSavingCategories(true);
+    try {
+      const res = await fetch("/api/pengaduan/kategori", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(tempCategories),
+      });
+
+      if (res.ok) {
+        setCategories([...tempCategories]);
+        alert("Daftar kategori pengaduan berhasil disimpan!");
+        setShowCategoryModal(false);
+      } else {
+        alert("Gagal menyimpan kategori.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Terjadi kesalahan saat menyimpan kategori.");
+    } finally {
+      setIsSavingCategories(false);
     }
   };
 
@@ -74,12 +189,6 @@ export default function AdminPengaduanPage() {
   }, [pengaduans, selectedYear]);
 
   // Statistics calculation matching official SIGAP BRIDA / Public Standard:
-  // Total = Total Laporan Masuk
-  // In progress = Sedang Ditangani (DIPROSES)
-  // Closed = Laporan Selesai (SELESAI)
-  // On Hold = Menunggu / Ditunda (MENUNGGU / DITOLAK)
-  // Tertangani = Closed (Selesai) + In progress (Sedang Ditangani)
-  // Rasio = (Tertangani / Total) * 100%
   const stats = useMemo(() => {
     const total = yearFilteredData.length;
     const selesai = yearFilteredData.filter((p) => p.status === "SELESAI").length;
@@ -183,7 +292,7 @@ export default function AdminPengaduanPage() {
     setFormData({
       nama: p.nama || "",
       email: p.email || "",
-      kategori: p.kategori || "",
+      kategori: p.kategori || categories[0] || "",
       isiAduan: p.isiAduan || "",
       status: p.status || "MENUNGGU",
       tanggapan: p.tanggapan || "",
@@ -232,7 +341,16 @@ export default function AdminPengaduanPage() {
             Kelola pengaduan, verifikasi tindak lanjut, dan pantau persentase penanganan aduan.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Tombol Kelola Kategori (FITUR REQUEST) */}
+          <button
+            onClick={openCategoryModal}
+            className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 flex items-center gap-2 text-xs font-bold shadow-sm shadow-emerald-600/20 transition active:scale-95"
+          >
+            <Tags className="w-3.5 h-3.5" />
+            Kelola Kategori Pengaduan
+          </button>
+
           {/* Year selector */}
           <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm text-xs font-semibold text-slate-600">
             <Calendar className="w-4 h-4 text-blue-600" />
@@ -250,6 +368,7 @@ export default function AdminPengaduanPage() {
               ))}
             </select>
           </div>
+
           <button
             onClick={fetchData}
             disabled={loading}
@@ -545,7 +664,7 @@ export default function AdminPengaduanPage() {
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-4">
-              {/* Tanggal Pengaduan Masuk (FITUR REQUEST: TANGGAL BISA DIEDIT) */}
+              {/* Tanggal Pengaduan Masuk */}
               <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80">
                 <label className="block mb-1.5 text-xs font-bold text-blue-900 flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-blue-600" />
@@ -591,18 +710,33 @@ export default function AdminPengaduanPage() {
                 </div>
               </div>
 
-              {/* Kategori */}
+              {/* Kategori Pengaduan (Dropdown Dinamis) */}
               <div>
-                <label className="block mb-1.5 text-xs font-semibold text-slate-700">
-                  Kategori Aduan
+                <label className="block mb-1.5 text-xs font-semibold text-slate-700 flex items-center justify-between">
+                  <span>Kategori Aduan</span>
+                  <button
+                    type="button"
+                    onClick={openCategoryModal}
+                    className="text-blue-600 hover:text-blue-700 text-[11px] font-bold flex items-center gap-1"
+                  >
+                    <Tags className="w-3 h-3" /> Kelola Kategori
+                  </button>
                 </label>
-                <input
-                  type="text"
+                <select
                   value={formData.kategori}
                   onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
-                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                >
+                  {/* Tampilkan kategori saat ini jika tidak ada dalam daftar aktif */}
+                  {formData.kategori && !categories.includes(formData.kategori) && (
+                    <option value={formData.kategori}>{formData.kategori} (Lama)</option>
+                  )}
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Isi Aduan */}
@@ -691,6 +825,160 @@ export default function AdminPengaduanPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL KELOLA KATEGORI PENGADUAN (FITUR REQUEST: EDIT / HAPUS / TAMBAH KATEGORI) */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-white w-full max-w-xl rounded-2xl p-6 lg:p-7 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-5 border-b border-slate-100 pb-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 mb-1.5">
+                  <Tags className="w-3.5 h-3.5" /> Manajemen Kategori
+                </div>
+                <h3 className="text-xl font-bold font-jakarta text-slate-800">
+                  Kelola Kategori Pengaduan
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Tambah, ubah nama, atau hapus opsi kategori pengaduan yang muncul pada formulir publik.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowCategoryModal(false)}
+                className="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-xl transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form Tambah Kategori Baru */}
+            <form onSubmit={handleAddCategory} className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Tambah Kategori Baru
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Contoh: Sarana & Prasarana Program BONSAI"
+                  value={newCatInput}
+                  onChange={(e) => setNewCatInput(e.target.value)}
+                  className="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <button
+                  type="submit"
+                  disabled={!newCatInput.trim()}
+                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                  Tambah
+                </button>
+              </div>
+            </form>
+
+            {/* Daftar Kategori Aktif */}
+            <div className="space-y-2 mb-6">
+              <div className="flex justify-between items-center px-1 mb-2">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Daftar Kategori ({tempCategories.length})
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  Klik ikon pensil untuk mengedit
+                </span>
+              </div>
+
+              <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden bg-white">
+                {tempCategories.map((cat, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 flex items-center justify-between gap-3 hover:bg-slate-50 transition"
+                  >
+                    {editingCatIndex === idx ? (
+                      <div className="flex-1 flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={editingCatText}
+                          onChange={(e) => setEditingCatText(e.target.value)}
+                          className="flex-1 px-3 py-1.5 bg-white border border-blue-400 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          autoFocus
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEditCategory(idx)}
+                          className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs transition"
+                          title="Simpan Perubahan Nama"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingCatIndex(null)}
+                          className="p-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs transition"
+                          title="Batal"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[10px] font-bold shrink-0">
+                            {idx + 1}
+                          </span>
+                          <span className="text-xs font-semibold text-slate-800 truncate">
+                            {cat}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditCategory(idx)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            title="Edit Nama Kategori"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCategory(idx)}
+                            className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                            title="Hapus Kategori"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tombol Simpan Perubahan */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setShowCategoryModal(false)}
+                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveAllCategories}
+                disabled={isSavingCategories}
+                className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-lg shadow-emerald-600/25 disabled:opacity-50"
+              >
+                {isSavingCategories ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...
+                  </>
+                ) : (
+                  "Simpan Perubahan Kategori"
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
