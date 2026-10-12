@@ -249,3 +249,23 @@ model Asesmen {
   updatedAt DateTime @updatedAt
 }
 
+
+
+model BonsaiBooking {
+  id            String   @id @default(cuid())
+  kodeBooking   String   @unique
+  tanggal       String   // YYYY-MM-DD
+  jamMulai      String   // HH:mm
+  jamSelesai    String   // HH:mm
+  kelas         String
+  mataPelajaran String
+  namaGuru      String
+  nomorWa       String?
+  jumlahSiswa   Int      @default(30)
+  zona          String
+  tujuan        String
+  status        String   @default("MENUNGGU") // MENUNGGU, DISETUJUI, SELESAI, DITOLAK
+  catatanAdmin  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
