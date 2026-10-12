@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { prisma } from "@/lib/prisma";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export default async function FasilitasPage() {
   const fasilitas = await prisma.fasilitas.findMany({ orderBy: { createdAt: "desc" } });
