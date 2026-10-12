@@ -19,7 +19,7 @@ import {
   Search, 
   RefreshCw,
   FileCheck2,
-  AlertCircle
+  Info
 } from "lucide-react";
 
 export default function AdminPengaduanPage() {
@@ -33,7 +33,7 @@ export default function AdminPengaduanPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("SEMUA");
   const [selectedYear, setSelectedYear] = useState("SEMUA");
-  const [showFormulaDetail, setShowFormulaDetail] = useState(false);
+  const [showFormulaDetail, setShowFormulaDetail] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -52,9 +52,9 @@ export default function AdminPengaduanPage() {
     }
   };
 
-  // Extract available years from data
+  // Extract available years from data (plus 2025 and 2026 as default presets)
   const availableYears = useMemo(() => {
-    const years = new Set<string>();
+    const years = new Set<string>(["2026", "2025"]);
     pengaduans.forEach((p) => {
       if (p.createdAt) {
         const yr = new Date(p.createdAt).getFullYear().toString();
@@ -64,7 +64,7 @@ export default function AdminPengaduanPage() {
     return Array.from(years).sort().reverse();
   }, [pengaduans]);
 
-  // Filtered dataset based on year filter (for stats & table)
+  // Filtered dataset based on year filter
   const yearFilteredData = useMemo(() => {
     if (selectedYear === "SEMUA") return pengaduans;
     return pengaduans.filter((p) => {
@@ -73,9 +73,13 @@ export default function AdminPengaduanPage() {
     });
   }, [pengaduans, selectedYear]);
 
-  // Statistics calculation based on formula:
-  // Laporan tertangani = Selesai + Sedang Ditangani (Diproses)
-  // Rasio = (Laporan tertangani / Total laporan) * 100%
+  // Statistics calculation matching official SIGAP BRIDA / Public Standard:
+  // Total = Total Laporan Masuk
+  // In progress = Sedang Ditangani (DIPROSES)
+  // Closed = Laporan Selesai (SELESAI)
+  // On Hold = Menunggu / Ditunda (MENUNGGU / DITOLAK)
+  // Tertangani = Closed (Selesai) + In progress (Sedang Ditangani)
+  // Rasio = (Tertangani / Total) * 100%
   const stats = useMemo(() => {
     const total = yearFilteredData.length;
     const selesai = yearFilteredData.filter((p) => p.status === "SELESAI").length;
@@ -83,6 +87,7 @@ export default function AdminPengaduanPage() {
     const menunggu = yearFilteredData.filter((p) => p.status === "MENUNGGU" || !p.status).length;
     const ditolak = yearFilteredData.filter((p) => p.status === "DITOLAK").length;
 
+    const onHold = menunggu + ditolak;
     const tertangani = selesai + diproses;
     const rasio = total > 0 ? (tertangani / total) * 100 : 0;
 
@@ -92,13 +97,14 @@ export default function AdminPengaduanPage() {
       diproses,
       menunggu,
       ditolak,
+      onHold,
       tertangani,
       rasio: rasio.toFixed(2),
       rasioNum: rasio
     };
   }, [yearFilteredData]);
 
-  // Filtered dataset for table display (adds search & status filters)
+  // Filtered dataset for table display
   const displayData = useMemo(() => {
     return yearFilteredData.filter((p) => {
       const matchStatus = statusFilter === "SEMUA" || p.status === statusFilter;
@@ -119,7 +125,7 @@ export default function AdminPengaduanPage() {
     setIsUpdating(true);
     
     try {
-      // Build ISO string with noon WITA offset to preserve accurate date
+      // Build ISO string with noon WITA offset (+08:00) to keep accurate date
       const createdAtISO = formData.createdAt 
         ? new Date(`${formData.createdAt}T12:00:00+08:00`).toISOString() 
         : undefined;
@@ -190,32 +196,32 @@ export default function AdminPengaduanPage() {
       case "SELESAI":
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-            <CheckCircle className="w-3 h-3" /> Selesai
+            <CheckCircle className="w-3 h-3" /> Closed (Selesai)
           </span>
         );
       case "DIPROSES":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
-            <Loader2 className="w-3 h-3 animate-spin" /> Sedang Ditangani
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+            <Loader2 className="w-3 h-3 animate-spin" /> In progress
           </span>
         );
       case "DITOLAK":
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200">
-            <X className="w-3 h-3" /> Ditolak / Ditunda
+            <X className="w-3 h-3" /> On Hold (Ditolak)
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-            <Clock className="w-3 h-3" /> Menunggu
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-300">
+            <Clock className="w-3 h-3" /> On Hold (Menunggu)
           </span>
         );
     }
   };
 
   return (
-    <div className="space-y-8 p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="space-y-6 p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -223,14 +229,14 @@ export default function AdminPengaduanPage() {
             Manajemen Pengaduan & Aspirasi
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Kelola aduan masyarakat, pantau status tindak lanjut, dan hitung rasio penyelesaian.
+            Kelola pengaduan, verifikasi tindak lanjut, dan pantau persentase penanganan aduan.
           </p>
         </div>
         <div className="flex items-center gap-3">
           {/* Year selector */}
-          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-200 shadow-sm text-xs font-semibold text-slate-600">
-            <Calendar className="w-4 h-4 text-emerald-600" />
-            <span>Tahun:</span>
+          <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm text-xs font-semibold text-slate-600">
+            <Calendar className="w-4 h-4 text-blue-600" />
+            <span>Pilih Tahun:</span>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
@@ -239,7 +245,7 @@ export default function AdminPengaduanPage() {
               <option value="SEMUA">Semua Tahun</option>
               {availableYears.map((yr) => (
                 <option key={yr} value={yr}>
-                  {yr}
+                  Tahun {yr}
                 </option>
               ))}
             </select>
@@ -249,197 +255,177 @@ export default function AdminPengaduanPage() {
             disabled={loading}
             className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 flex items-center gap-2 text-xs font-semibold shadow-sm transition"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-emerald-600" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-blue-600" : ""}`} />
             Refresh
           </button>
         </div>
       </div>
 
-      {/* SECTION: Rasio Penyelesaian Pengaduan & Statistik (Sesuai Rumus Baku) */}
-      <div className="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-6 lg:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden">
-        {/* Background glow decoration */}
-        <div className="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl pointer-events-none" />
+      {/* KOMPONEN KARTU STATISTIK (SESUAI CONTOH GAMBAR SIGAP BRIDA) */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 transition-all">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[#3b82f6] font-bold text-base sm:text-lg tracking-tight">
+            Statistik Peta Aduan {selectedYear !== "SEMUA" ? `Tahun ${selectedYear}` : "(Semua Periode)"}
+          </h2>
+          <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+            Update otomatis sesuai database
+          </span>
+        </div>
 
-        <div className="relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-400/30 mb-3">
-                <TrendingUp className="w-3.5 h-3.5" />
-                Indikator Kinerja Pelayanan
+        {/* 4 Kotak Statistik Presisi Sesuai Gambar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          {/* Card 1: Total Titik Aduan */}
+          <div className="bg-[#f8fafc] border border-[#f1f5f9] rounded-xl p-5 text-center shadow-xs">
+            <p className="text-3xl sm:text-4xl font-extrabold text-[#334155] font-jakarta tracking-tight">
+              {stats.total}
+            </p>
+            <p className="text-xs sm:text-sm text-[#94a3b8] font-medium mt-1">
+              Total Titik Aduan
+            </p>
+          </div>
+
+          {/* Card 2: In progress (Orange) */}
+          <div className="bg-[#f8fafc] border border-[#f1f5f9] rounded-xl p-5 text-center shadow-xs">
+            <p className="text-3xl sm:text-4xl font-extrabold text-[#f59e0b] font-jakarta tracking-tight">
+              {stats.diproses}
+            </p>
+            <p className="text-xs sm:text-sm text-[#94a3b8] font-medium mt-1">
+              In progress
+            </p>
+          </div>
+
+          {/* Card 3: Closed (Green) */}
+          <div className="bg-[#f8fafc] border border-[#f1f5f9] rounded-xl p-5 text-center shadow-xs">
+            <p className="text-3xl sm:text-4xl font-extrabold text-[#16a34a] font-jakarta tracking-tight">
+              {stats.selesai}
+            </p>
+            <p className="text-xs sm:text-sm text-[#94a3b8] font-medium mt-1">
+              Closed
+            </p>
+          </div>
+
+          {/* Card 4: On Hold (Red) */}
+          <div className="bg-[#f8fafc] border border-[#f1f5f9] rounded-xl p-5 text-center shadow-xs">
+            <p className="text-3xl sm:text-4xl font-extrabold text-[#ef4444] font-jakarta tracking-tight">
+              {stats.onHold}
+            </p>
+            <p className="text-xs sm:text-sm text-[#94a3b8] font-medium mt-1">
+              On Hold
+            </p>
+          </div>
+        </div>
+
+        {/* Panel Rasio Penyelesaian Pengaduan Terintegrasi */}
+        <div className="mt-6 pt-5 border-t border-slate-100">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 bg-gradient-to-r from-blue-50/70 via-emerald-50/50 to-teal-50/60 p-5 rounded-2xl border border-blue-100/80">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-md bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider">
+                  Rasio Kinerja
+                </span>
+                <h3 className="text-base font-bold text-slate-800">
+                  Persentase Laporan Tertangani: <span className="text-emerald-600 font-extrabold">{stats.rasio}%</span>
+                </h3>
               </div>
-              <h2 className="text-xl lg:text-2xl font-bold font-jakarta text-white">
-                Rasio Penyelesaian Pengaduan
-              </h2>
-              <p className="text-emerald-100/70 text-xs lg:text-sm mt-1 max-w-xl">
-                Tingkat efektivitas penanganan aduan berdasarkan perbandingan jumlah pengaduan yang tertangani terhadap total laporan yang masuk.
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Total laporan tertangani (<strong>Closed: {stats.selesai}</strong> + <strong>In progress: {stats.diproses}</strong>) berjumlah <strong>{stats.tertangani} laporan</strong> dari total <strong>{stats.total} laporan</strong> yang masuk.
               </p>
             </div>
 
-            {/* Big Ratio Badge */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 flex items-center gap-5 shrink-0 shadow-lg">
-              <div className="text-right">
-                <p className="text-xs uppercase tracking-wider text-emerald-200 font-bold">
-                  Persentase Tertangani
-                </p>
-                <div className="text-4xl lg:text-5xl font-black font-jakarta text-emerald-400 tracking-tight flex items-baseline justify-end gap-1">
-                  <span>{stats.rasio}</span>
-                  <span className="text-2xl font-bold text-emerald-200">%</span>
-                </div>
+            {/* Progress Bar & Quick Badge */}
+            <div className="w-full lg:w-72 shrink-0">
+              <div className="flex justify-between items-center text-xs font-bold text-slate-700 mb-1.5">
+                <span>Rasio Capaian</span>
+                <span className="text-emerald-700 font-mono text-sm">{stats.rasio}%</span>
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/30 border border-emerald-400/40 flex items-center justify-center text-emerald-300">
-                <FileCheck2 className="w-8 h-8" />
+              <div className="w-full h-3.5 bg-slate-200/80 rounded-full overflow-hidden p-0.5">
+                <div 
+                  className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full transition-all duration-700 ease-out"
+                  style={{ width: `${Math.min(stats.rasioNum, 100)}%` }}
+                />
               </div>
             </div>
           </div>
 
-          {/* Progress Bar */}
-          <div className="mt-6">
-            <div className="flex justify-between items-center text-xs font-semibold text-emerald-200 mb-2">
-              <span>Progres Penyelesaian Laporan</span>
-              <span>
-                {stats.tertangani} dari {stats.total} laporan tertangani ({stats.rasio}%)
-              </span>
-            </div>
-            <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden p-0.5 border border-white/10">
-              <div
-                className="h-full bg-gradient-to-r from-emerald-400 to-teal-300 rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${Math.min(stats.rasioNum, 100)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* 4 Detail Metric Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:gap-4 mt-6">
-            {/* Total */}
-            <div className="bg-white/5 hover:bg-white/10 transition border border-white/10 rounded-2xl p-4">
-              <div className="flex items-center justify-between text-slate-300 text-xs mb-2">
-                <span>Total Laporan</span>
-                <Inbox className="w-4 h-4 text-emerald-400" />
-              </div>
-              <p className="text-2xl font-bold font-jakarta text-white">{stats.total}</p>
-              <p className="text-[11px] text-emerald-200/60 mt-1">Aduan masuk</p>
-            </div>
-
-            {/* Selesai */}
-            <div className="bg-white/5 hover:bg-white/10 transition border border-white/10 rounded-2xl p-4">
-              <div className="flex items-center justify-between text-emerald-300 text-xs mb-2">
-                <span>Laporan Selesai</span>
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              </div>
-              <p className="text-2xl font-bold font-jakarta text-emerald-300">{stats.selesai}</p>
-              <p className="text-[11px] text-emerald-200/60 mt-1">Telah diselesaikan</p>
-            </div>
-
-            {/* Sedang Ditangani */}
-            <div className="bg-white/5 hover:bg-white/10 transition border border-white/10 rounded-2xl p-4">
-              <div className="flex items-center justify-between text-blue-300 text-xs mb-2">
-                <span>Sedang Ditangani</span>
-                <Loader2 className="w-4 h-4 text-blue-400" />
-              </div>
-              <p className="text-2xl font-bold font-jakarta text-blue-300">{stats.diproses}</p>
-              <p className="text-[11px] text-blue-200/60 mt-1">Dalam proses tindak lanjut</p>
-            </div>
-
-            {/* Menunggu & Ditunda */}
-            <div className="bg-white/5 hover:bg-white/10 transition border border-white/10 rounded-2xl p-4">
-              <div className="flex items-center justify-between text-amber-300 text-xs mb-2">
-                <span>Menunggu / Ditunda</span>
-                <Clock className="w-4 h-4 text-amber-400" />
-              </div>
-              <p className="text-2xl font-bold font-jakarta text-amber-300">
-                {stats.menunggu + stats.ditolak}
-              </p>
-              <p className="text-[11px] text-amber-200/60 mt-1">
-                {stats.menunggu} antre, {stats.ditolak} ditolak
-              </p>
-            </div>
-          </div>
-
-          {/* Collapsible / Detailed Formula Box (Matching User Image Formula & Breakdown) */}
-          <div className="mt-6 pt-5 border-t border-white/10">
+          {/* Toggle Rincian Rumus Lengkap */}
+          <div className="mt-4 flex items-center justify-between">
             <button
               onClick={() => setShowFormulaDetail(!showFormulaDetail)}
-              className="flex items-center gap-2 text-xs font-bold text-emerald-300 hover:text-emerald-200 transition"
+              className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 transition"
             >
-              <Calculator className="w-4 h-4" />
-              <span>{showFormulaDetail ? "Sembunyikan" : "Tampilkan"} Rincian Rumus & Perhitungan Matematika</span>
-              <span className="text-[10px] bg-white/15 px-2 py-0.5 rounded-full text-white">
-                {showFormulaDetail ? "▲" : "▼"}
+              <Calculator className="w-3.5 h-3.5" />
+              <span>{showFormulaDetail ? "Sembunyikan" : "Lihat"} Rincian Rumus & Perhitungan Matematika</span>
+              <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                {showFormulaDetail ? "Tutup ▲" : "Buka ▼"}
               </span>
             </button>
-
-            {showFormulaDetail && (
-              <div className="mt-4 bg-slate-950/60 border border-white/15 rounded-2xl p-5 text-xs text-slate-200 space-y-4 animate-in fade-in">
-                {/* Rumus Banner */}
-                <div className="p-4 rounded-xl bg-sky-950/40 border border-sky-400/30 text-sky-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <p className="font-bold text-sky-300 text-xs mb-1">RUMUS PERHITUNGAN RASIO:</p>
-                    <div className="font-mono text-sm sm:text-base font-semibold">
-                      Rasio = [ Jumlah Pengaduan Tertangani / Jumlah Pengaduan Masuk ] × 100%
-                    </div>
-                  </div>
-                  <div className="text-xs bg-sky-500/20 px-3 py-1.5 rounded-lg border border-sky-400/30 shrink-0">
-                    Standar Pelaporan Resmi
-                  </div>
-                </div>
-
-                {/* Penjelasan Langkah-Langkah */}
-                <div className="space-y-2 text-slate-300 leading-relaxed font-sans">
-                  <p className="font-semibold text-white">
-                    Rincian data {selectedYear !== "SEMUA" ? `Tahun ${selectedYear}` : "keseluruhan"}:
-                  </p>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-300">
-                    <li>Total laporan masuk: <strong className="text-white font-mono">{stats.total}</strong></li>
-                    <li>Laporan selesai: <strong className="text-emerald-300 font-mono">{stats.selesai}</strong></li>
-                    <li>Laporan sedang ditangani: <strong className="text-blue-300 font-mono">{stats.diproses}</strong></li>
-                    <li>Laporan menunggu / ditunda: <strong className="text-amber-300 font-mono">{stats.menunggu + stats.ditolak}</strong></li>
-                  </ul>
-
-                  <div className="pt-2">
-                    <p className="font-semibold text-white">Definisi Laporan Tertangani:</p>
-                    <p className="text-slate-300">
-                      Laporan tertangani adalah akumulasi dari <strong>Laporan Selesai</strong> ditambah <strong>Laporan Sedang Ditangani</strong>:
-                    </p>
-                    <p className="font-mono bg-white/5 p-2.5 rounded-lg border border-white/10 my-2 text-emerald-300">
-                      Laporan Tertangani = {stats.selesai} (selesai) + {stats.diproses} (sedang ditangani) = <span className="font-bold">{stats.tertangani} laporan</span>
-                    </p>
-                  </div>
-
-                  <div className="pt-1">
-                    <p className="font-semibold text-white">Kalkulasi Akhir:</p>
-                    <p className="font-mono bg-emerald-950/40 p-2.5 rounded-lg border border-emerald-400/30 text-emerald-300">
-                      Rasio = ({stats.tertangani} / {stats.total}) × 100% = <span className="text-white font-bold text-sm">{stats.rasio}%</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
+
+          {showFormulaDetail && (
+            <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 space-y-3 animate-in fade-in">
+              <div className="p-3 bg-white rounded-lg border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="font-mono text-xs sm:text-sm font-bold text-slate-800">
+                  Rasio = [ Jumlah Pengaduan Tertangani / Jumlah Pengaduan yang Masuk ] × 100%
+                </div>
+                <span className="text-[11px] text-slate-500 font-sans">
+                  Formula Laporan Resmi
+                </span>
+              </div>
+
+              <div className="space-y-1.5 text-slate-600 leading-relaxed">
+                <p className="font-semibold text-slate-800">
+                  Rincian Data {selectedYear !== "SEMUA" ? `Tahun ${selectedYear}` : "(Semua Data)"}:
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div className="p-2 bg-white rounded-md border border-slate-200">
+                    Total Laporan: <strong className="text-slate-900 font-mono">{stats.total}</strong>
+                  </div>
+                  <div className="p-2 bg-white rounded-md border border-slate-200">
+                    In progress: <strong className="text-amber-600 font-mono">{stats.diproses}</strong>
+                  </div>
+                  <div className="p-2 bg-white rounded-md border border-slate-200">
+                    Closed: <strong className="text-emerald-600 font-mono">{stats.selesai}</strong>
+                  </div>
+                  <div className="p-2 bg-white rounded-md border border-slate-200">
+                    On Hold: <strong className="text-rose-600 font-mono">{stats.onHold}</strong>
+                  </div>
+                </div>
+
+                <p className="pt-1">
+                  <strong>Laporan Tertangani</strong> = {stats.selesai} (Closed) + {stats.diproses} (In progress) = <strong className="text-slate-900 font-mono">{stats.tertangani} laporan</strong>.
+                </p>
+                <p>
+                  <strong>Perhitungan Rasio:</strong> ({stats.tertangani} / {stats.total}) × 100% = <strong className="text-emerald-700 font-bold font-mono text-sm">{stats.rasio}%</strong>.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Table Section */}
+      {/* Tabel Data Pengaduan */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         {/* Table Filters & Search Bar */}
         <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 mr-1">Status:</span>
-            {["SEMUA", "MENUNGGU", "DIPROSES", "SELESAI", "DITOLAK"].map((st) => (
+            <span className="text-xs font-semibold text-slate-500 mr-1">Filter Status:</span>
+            {[
+              { id: "SEMUA", label: "Semua" },
+              { id: "MENUNGGU", label: "On Hold (Menunggu)" },
+              { id: "DIPROSES", label: "In progress" },
+              { id: "SELESAI", label: "Closed" },
+              { id: "DITOLAK", label: "On Hold (Ditolak)" },
+            ].map((st) => (
               <button
-                key={st}
-                onClick={() => setStatusFilter(st)}
+                key={st.id}
+                onClick={() => setStatusFilter(st.id)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                  statusFilter === st
-                    ? "bg-emerald-600 text-white shadow-sm"
+                  statusFilter === st.id
+                    ? "bg-blue-600 text-white shadow-sm"
                     : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
                 }`}
               >
-                {st === "SEMUA"
-                  ? "Semua Status"
-                  : st === "DIPROSES"
-                  ? "Sedang Ditangani"
-                  : st.charAt(0) + st.slice(1).toLowerCase()}
+                {st.label}
               </button>
             ))}
           </div>
@@ -448,10 +434,10 @@ export default function AdminPengaduanPage() {
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Cari tiket, nama, isi..."
+              placeholder="Cari nomor tiket, nama, isi..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
             />
           </div>
         </div>
@@ -473,7 +459,7 @@ export default function AdminPengaduanPage() {
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-emerald-600" />
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-blue-600" />
                     Memuat data pengaduan...
                   </td>
                 </tr>
@@ -516,7 +502,7 @@ export default function AdminPengaduanPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openModal(p)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
                         >
                           <Edit className="w-3.5 h-3.5" /> Edit / Buka
                         </button>
@@ -560,19 +546,19 @@ export default function AdminPengaduanPage() {
 
             <form onSubmit={handleUpdate} className="space-y-4">
               {/* Tanggal Pengaduan Masuk (FITUR REQUEST: TANGGAL BISA DIEDIT) */}
-              <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
-                <label className="block mb-1.5 text-xs font-bold text-emerald-900 flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-emerald-600" />
+              <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80">
+                <label className="block mb-1.5 text-xs font-bold text-blue-900 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-blue-600" />
                   Tanggal Pengaduan Masuk (Dapat Diedit)
                 </label>
                 <input
                   type="date"
                   value={formData.createdAt || ""}
                   onChange={(e) => setFormData({ ...formData, createdAt: e.target.value })}
-                  className="w-full border border-emerald-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  className="w-full border border-blue-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   required
                 />
-                <p className="text-[11px] text-emerald-700/80 mt-1.5">
+                <p className="text-[11px] text-blue-700/80 mt-1.5">
                   Pilih tanggal untuk menyesuaikan waktu arsip laporan masuk.
                 </p>
               </div>
@@ -587,7 +573,7 @@ export default function AdminPengaduanPage() {
                     type="text"
                     value={formData.nama}
                     onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                    className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
@@ -599,7 +585,7 @@ export default function AdminPengaduanPage() {
                     type="text"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="08xxxxxxxxxx atau email@contoh.com"
                   />
                 </div>
@@ -614,7 +600,7 @@ export default function AdminPengaduanPage() {
                   type="text"
                   value={formData.kategori}
                   onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
-                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -627,7 +613,7 @@ export default function AdminPengaduanPage() {
                 <textarea
                   value={formData.isiAduan}
                   onChange={(e) => setFormData({ ...formData, isiAduan: e.target.value })}
-                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={3}
                   required
                 />
@@ -658,12 +644,12 @@ export default function AdminPengaduanPage() {
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
-                  <option value="MENUNGGU">Menunggu (Belum Diproses)</option>
-                  <option value="DIPROSES">Diproses (Sedang Ditangani)</option>
-                  <option value="SELESAI">Selesai (Sudah Ditindaklanjuti)</option>
-                  <option value="DITOLAK">Ditolak / Ditunda</option>
+                  <option value="MENUNGGU">On Hold (Menunggu / Belum Diproses)</option>
+                  <option value="DIPROSES">In progress (Sedang Ditangani)</option>
+                  <option value="SELESAI">Closed (Selesai)</option>
+                  <option value="DITOLAK">On Hold (Ditolak / Ditunda)</option>
                 </select>
               </div>
 
@@ -675,7 +661,7 @@ export default function AdminPengaduanPage() {
                 <textarea
                   value={formData.tanggapan}
                   onChange={(e) => setFormData({ ...formData, tanggapan: e.target.value })}
-                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={3}
                   placeholder="Ketik tanggapan resmi atau keterangan tindak lanjut di sini..."
                 />
@@ -693,7 +679,7 @@ export default function AdminPengaduanPage() {
                 <button
                   type="submit"
                   disabled={isUpdating}
-                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-lg shadow-emerald-600/25 disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-lg shadow-blue-600/25 disabled:opacity-50"
                 >
                   {isUpdating ? (
                     <>
