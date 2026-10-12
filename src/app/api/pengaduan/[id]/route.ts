@@ -12,21 +12,28 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
+    const updateData: any = { 
+      nama: body.nama,
+      email: body.email,
+      kategori: body.kategori,
+      isiAduan: body.isiAduan,
+      status: body.status, 
+      tanggapan: body.tanggapan 
+    };
+
+    if (body.createdAt) {
+      updateData.createdAt = new Date(body.createdAt);
+    }
+
     const updated = await prisma.pengaduan.update({
       where: { id },
-      data: { 
-        nama: body.nama,
-        email: body.email,
-        kategori: body.kategori,
-        isiAduan: body.isiAduan,
-        status: body.status, 
-        tanggapan: body.tanggapan 
-      },
+      data: updateData,
     });
     
     revalidatePath('/', 'layout');
     return NextResponse.json(updated);
   } catch (error) {
+    console.error("Failed to update pengaduan:", error);
     return NextResponse.json({ error: "Failed to update pengaduan" }, { status: 500 });
   }
 }
